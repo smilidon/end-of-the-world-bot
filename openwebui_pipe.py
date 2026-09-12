@@ -33,7 +33,10 @@ class Pipe:
                 with opener.open(req,timeout=90) as response:
                     result=json.load(response)
             except urllib.error.HTTPError as exc:
-                raw=exc.read(2048)
+                try:
+                    raw=exc.read(2048)
+                finally:
+                    exc.close()
                 try: detail=json.loads(raw)
                 except (ValueError,UnicodeError): detail={}
                 code=detail.get('error','unknown') if isinstance(detail,dict) else 'unknown'

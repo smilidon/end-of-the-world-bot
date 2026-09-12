@@ -45,4 +45,5 @@ route_adapter.py
 tests/test_chat.py
 tests/test_core.py
 tests/test_privacy.py
+tests/test_resource_cleanup.py
 tools/privacy_scan.py
