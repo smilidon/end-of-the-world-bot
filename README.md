@@ -3,6 +3,8 @@
 A Linux-first, local reference assistant for an offline document library, with
 source citations and optional OsmAnd routing and printable directions.
 
+[Read the project introduction](https://jlpcomputers.com/field-notes/meet-end-of-the-world-bot) on JLP Computer Solutions.
+
 This is a cleaned snapshot of an existing working offline project, not a new
 hosted service. It preserves the project's bounded lexical retrieval, PDF page
 references, archive ranking, street-resolution fallback, route geometry,

@@ -5,10 +5,9 @@ SYSTEM='''You answer a short reference question using only the supplied source r
 def query(a):
  start=time.monotonic()
  if len(a.question)>400 or len(a.search or '')>160:raise ValueError('Question limited to 400 characters; search to 160')
- lock=open(HERE/'query.lock','a')
- try:fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
- except BlockingIOError:lock.close();raise ValueError('Another library query is active; no request submitted')
- try:
+ with open(HERE/'query.lock','a') as lock:
+  try:fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+  except BlockingIOError:raise ValueError('Another library query is active; no request submitted')
   sources=retrieve(a)
   # Entire supplied evidence is bounded; IDs/locations are application generated.
   remaining=4300
@@ -33,5 +32,3 @@ def query(a):
   result['output_chars']=len(result['answer']);result['output_words']=len(result['answer'].split())
   result['input_target_met']=1000<=result['input_tokens']<=1500
   return result
- finally:
-  lock.close()
