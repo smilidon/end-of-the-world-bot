@@ -1,0 +1,168 @@
+[
+  {
+    "source": "compact-offline-trial/library_access.py",
+    "destination": "library_access.py",
+    "source_sha256": "8ba77cff909e8f5025d73208e7d7610c94ea946e2e28ef4efe0a4ee5851fbf73",
+    "modified": true,
+    "staged_sha256": "76245a94cafbf2c0ae41550d46d20d38facbfef9cc9c0a200361fdfc071898fa"
+  },
+  {
+    "source": "compact-offline-trial/citation_links.py",
+    "destination": "citation_links.py",
+    "source_sha256": "e2d6e5bdd06cc0d51ac016f90200796cce41383478f2789fc1cfd942a63c6ded",
+    "modified": true,
+    "staged_sha256": "2a4cae1a3e052541ad3e061be713e5ad1e29451155020045818b20c62c40744b"
+  },
+  {
+    "source": "compact-offline-trial/multistate_routing.py",
+    "destination": "multistate_routing.py",
+    "source_sha256": "b34696dc1de6dc23b70193048dd27d8d76d44034f0a15a4d4ea87118f47909c2",
+    "modified": true,
+    "staged_sha256": "773b68e22d7fae8e626fdd3cc69a802267e21b9fe507953f0448f5e2550cd83a"
+  },
+  {
+    "source": "compact-offline-trial/corridor_routing.py",
+    "destination": "corridor_routing.py",
+    "source_sha256": "57c538a604ceb186af51d4e2587afed188a54cf829f0e20b7b4fc0d1c117ed98",
+    "modified": true,
+    "staged_sha256": "f950769cdc376350e319519169bb14c7280c5062958d58b458ce99a890f1f444"
+  },
+  {
+    "source": "compact-offline-trial/named_routing.py",
+    "destination": "named_routing.py",
+    "source_sha256": "077087d953f531d76edf88fa1d54c8b2380e1fb401c0ff98ab888789ab833f56",
+    "modified": true,
+    "staged_sha256": "0790e7356995e58a5222bb104a9b8c7a333ca939b212442587f557aa6b77416a"
+  },
+  {
+    "source": "compact-offline-trial/AddressProbe.java",
+    "destination": "AddressProbe.java",
+    "source_sha256": "b71bf01d9f81913cb1e5f0ba31ab21af9655fee478b7b00ba4586d09d9c18fa6",
+    "modified": true,
+    "staged_sha256": "898580e38c1f79202d353d08e3a9fed53daa9f29cd1831440e009c14ab9959eb"
+  },
+  {
+    "source": "compact-offline-trial/CorridorProbe.java",
+    "destination": "CorridorProbe.java",
+    "source_sha256": "89ba7b3f03020874c8fd80b65b9f014f32f3c5159c8fc53edd371292a5156310",
+    "modified": true,
+    "staged_sha256": "890d9e23785eef0e0739a7448c00ecbc8260ac53414b18b1fbdb3bfe5b30d3c1"
+  },
+  {
+    "source": "compact-offline-trial/MultiRouteGeometry.java",
+    "destination": "MultiRouteGeometry.java",
+    "source_sha256": "5e201e0ce9e3457c8ea40c80a46c80466a2c0fdf286218e25ee7a980bd309477",
+    "modified": true,
+    "staged_sha256": "cb7ed7cb4b897dafa5b23eec15eef58bd17a657007275601f656d951c4024a05"
+  },
+  {
+    "source": "compact-offline-trial/NamedPlaces.java",
+    "destination": "NamedPlaces.java",
+    "source_sha256": "8c4d5ac587d83367b0b295384651f0a45c3ed6fe46227752a922174f3b91fb52",
+    "modified": true,
+    "staged_sha256": "b18cd60b58c47b296733c5887e9a1d400c6c45adbe31b653209505419ee5be43"
+  },
+  {
+    "source": "compact-offline-trial/local_visuals/route_map.py",
+    "destination": "local_visuals/route_map.py",
+    "source_sha256": "998faa7efcbc39b2be1e3d998c6648e20718dddafce3153cf7ff4fe42649688d",
+    "modified": true,
+    "staged_sha256": "47fbc8cb1d89efe63ee39491ee40210d9802eef23be9f890421c74a4ebda8ca3"
+  },
+  {
+    "source": "compact-offline-trial/local_visuals/RouteGeometry.java",
+    "destination": "local_visuals/RouteGeometry.java",
+    "source_sha256": "2affc5c010cce72d9d547dfff0539a761f291adc76e5551444c9167b1ffb976a",
+    "modified": true,
+    "staged_sha256": "619b89a808d2bf7e5d4146fdfbed40ef7fc92181f3bc2a029a9f7026410c0ece"
+  },
+  {
+    "source": "compact-offline-trial/local_visuals/NativeMap.java",
+    "destination": "local_visuals/NativeMap.java",
+    "source_sha256": "bfe8779ab0d71cb1cca2163ff136c2396c65108a4f651e6e85118484db601e68",
+    "modified": true,
+    "staged_sha256": "3b15a87561cbb44b44651e5776d250ad2ae7440b34d0cd4f91a78bfdf55fe2be"
+  },
+  {
+    "source": "compact-offline-trial/local_visuals/print_route_formatter.py",
+    "destination": "local_visuals/print_route_formatter.py",
+    "source_sha256": "fea09e71f4c225e4b4cb05187b303d21302e215d283d19a08921f278989ae017",
+    "modified": true,
+    "staged_sha256": "7b04cd59685542ec02747cee570f4a9b7b6aa42ba9ecd81526a5174264ecd5b1"
+  },
+  {
+    "source": "compact-offline-trial/local_visuals/units.py",
+    "destination": "local_visuals/units.py",
+    "source_sha256": "18e340cc09e4b104c31c923f0fcdbfdaa5646e1343b4f1dc02f5027661efdecf",
+    "modified": true,
+    "staged_sha256": "03cc3f113bb8e49b42044ff0a393b2ccb3cd71e29fab8f53485c375a62d6eb25"
+  },
+  {
+    "source": "local-qa/ask.py (minimal explicitly selected module)",
+    "destination": "reference_helpers.py",
+    "extracted": [
+      "Text",
+      "clean",
+      "run"
+    ],
+    "source_sha256": "7bebd02d080fd1884a24f325cea45b8e9574aba42daa13a266fb69f90aa7855f",
+    "staged_sha256": "4210750ff4fb0256ea3e45c91fe461663018ddd4718f22aac0e6aeedcb4ed782"
+  },
+  {
+    "source": "local-qa/ask.py (minimal explicitly selected module)",
+    "destination": "model_query.py",
+    "extracted": [
+      "SYSTEM",
+      "query"
+    ],
+    "source_sha256": "7bebd02d080fd1884a24f325cea45b8e9574aba42daa13a266fb69f90aa7855f",
+    "staged_sha256": "75ad9c6a02f35d0afc618333c8ac2fe07734dafa2abdcc79a044b5bbbf21f331"
+  },
+  {
+    "source": "compact-offline-trial/openwebui_pipe.py",
+    "destination": "openwebui_pipe.py",
+    "source_sha256": "1abee03e172687c08ec5d78dc8f494d30bc9283cdd84d62fd9826eb8fd543155",
+    "modified": true,
+    "staged_sha256": "9c6144dadd84bbfe4251ee58d998d22354c538954eec813517f118e69654edd6"
+  },
+  {
+    "source": "compact-offline-trial/trial.py",
+    "destination": "http_adapter.py",
+    "source_sha256": "faea58b34e29ee33efa084c7a3e2143684b23277d42c22581cc5ab817be1035c",
+    "modified": true,
+    "extracted": [
+      "Rejection",
+      "normalized",
+      "HTTPServer /trial pattern"
+    ],
+    "staged_sha256": "558530cea5a9df3f02224d0b7fc1e59bb9d4a4069af2b1a8bf3d5a8999ccb075"
+  },
+  {
+    "source": "compact-offline-trial/named_map_integration.py",
+    "destination": "route_adapter.py",
+    "source_sha256": "9fda4057b35289bc014e430e95441c1f5d3a5841fc8cba6555ede3a4f7a01122",
+    "modified": true,
+    "extracted": [
+      "execute"
+    ],
+    "staged_sha256": "61a518ca4ef27dcfb959d916d7bb049d366c29bd5deb811d81ec8403e4d4cba0"
+  },
+  {
+    "source": "compact-offline-trial/local_visuals/print_routes.py",
+    "destination": "local_visuals/print_routes.py",
+    "source_sha256": "5685331c2c2b84abb007330d6a8c7dc26028897f7733f75be55afdb2bb892806",
+    "modified": true,
+    "staged_sha256": "36012dd660316860383031fcf11db80599a44d2142743ae87a4b2e3a71d0da6c"
+  },
+  {
+    "source": "compact-offline-trial/local_visuals/export.py",
+    "destination": "local_visuals/export.py",
+    "source_sha256": "1271013a631b923e321bdfd797f57ace35e9e37b856797862fc4eae46c0b6030",
+    "modified": true,
+    "extracted": [
+      "open_artifact",
+      "serve"
+    ],
+    "staged_sha256": "9b7d60b461a2520fc65e9d6a7f787289c10682b4b3fabeb9cee27bf0da399b62"
+  }
+]

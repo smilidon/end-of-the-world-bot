@@ -1,0 +1,7 @@
+# Native map exports only; Java/OsmAnd/system Cairo/fonts are separate.
+CairoSVG>=2.7,<3
+Pillow>=12,<13
+reportlab>=5,<6
+
+# Original chat route export verification
+PyMuPDF==1.28.0

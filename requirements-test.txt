@@ -1,0 +1,5 @@
+reportlab==5.0.0
+Pillow==12.3.0
+
+# Original chat route export verification
+PyMuPDF==1.28.0
