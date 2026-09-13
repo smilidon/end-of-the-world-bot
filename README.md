@@ -22,6 +22,17 @@ Illustrated `Guide:` exports and legacy `Map:` dispatch remain omitted; see
 [chat setup and exact API limits](docs/CHAT.md).
 
 
+## Install or carry on a flash drive
+
+[Download Linux portable alpha v0.1.0-alpha.1](https://github.com/smilidon/end-of-the-world-bot/releases/tag/v0.1.0-alpha.1)
+— [direct ZIP](https://github.com/smilidon/end-of-the-world-bot/releases/download/v0.1.0-alpha.1/end-of-the-world-bot-0.1.0-alpha.1-linux-python.zip).
+Extract it and follow [START_HERE.md](START_HERE.md): `sh launch.sh doctor`, then
+`sh install.sh` for a user-local copy, or run directly from the extracted USB folder.
+Requires **Linux, Python 3.11+ and SQLite FTS5**; PDFs also need `pdftotext`.
+The ZIP includes the installer, launcher, and complete application source, not a
+Python runtime, models, maps, or documents. It is not bootable or a complete chat
+appliance. Existing install folders are never overwritten.
+
 ## Chat interface
 
 See [Open WebUI Pipe setup](docs/CHAT.md). The CLI below is also available for

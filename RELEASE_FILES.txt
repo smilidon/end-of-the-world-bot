@@ -11,6 +11,8 @@ README.md
 RELEASE_FILES.txt
 SECURITY.md
 SOURCE_MANIFEST.json
+START_HERE.md
+VERSION
 bot.py
 citation_links.py
 corridor_routing.py
@@ -24,6 +26,8 @@ docs/RECOVERY.md
 docs/ROUTING.md
 docs/VERIFICATION.md
 http_adapter.py
+install.sh
+launch.sh
 library_access.py
 local_visuals/NativeMap.java
 local_visuals/RouteGeometry.java
@@ -38,12 +42,15 @@ model_query.py
 multistate_routing.py
 named_routing.py
 openwebui_pipe.py
+portable.py
 reference_helpers.py
 requirements-optional.txt
 requirements-test.txt
 route_adapter.py
 tests/test_chat.py
 tests/test_core.py
+tests/test_portable.py
 tests/test_privacy.py
 tests/test_resource_cleanup.py
+tools/build_release.py
 tools/privacy_scan.py
