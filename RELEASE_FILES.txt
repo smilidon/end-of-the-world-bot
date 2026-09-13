@@ -3,6 +3,7 @@
 AddressProbe.java
 CorridorProbe.java
 FILE_MANIFEST.sha256
+INSTALL_AND_DOWNLOAD.md
 LICENSE
 MultiRouteGeometry.java
 NOTICE.md
@@ -13,18 +14,22 @@ SECURITY.md
 SOURCE_MANIFEST.json
 START_HERE.md
 VERSION
+bootstrap.py
 bot.py
 citation_links.py
 corridor_routing.py
+docs/AGENT_SETUP.md
 docs/ARCHITECTURE.md
 docs/CHAT.md
 docs/HARDWARE.md
 docs/LICENSE_AUDIT.md
 docs/LIMITS.md
+docs/MANUAL_CATALOG.md
 docs/PUBLISH.md
 docs/RECOVERY.md
 docs/ROUTING.md
 docs/VERIFICATION.md
+download_manuals.py
 http_adapter.py
 install.sh
 launch.sh
@@ -38,6 +43,7 @@ local_visuals/print_route_formatter.py
 local_visuals/print_routes.py
 local_visuals/route_map.py
 local_visuals/units.py
+manuals.json
 model_query.py
 multistate_routing.py
 named_routing.py
@@ -49,6 +55,7 @@ requirements-test.txt
 route_adapter.py
 tests/test_chat.py
 tests/test_core.py
+tests/test_manuals.py
 tests/test_portable.py
 tests/test_privacy.py
 tests/test_resource_cleanup.py

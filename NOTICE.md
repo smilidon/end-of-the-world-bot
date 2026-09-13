@@ -35,3 +35,5 @@ BSD/MIT-style notice retention, LGPL/GPL source and relinking requirements where
 applicable, and ODbL attribution/database obligations for distributed map data.
 Review the exact versions and assets you actually ship. This inventory is not
 a blanket approval of dependencies, model weights, documents or artwork.
+
+Manual catalog and setup additions: GPL-3.0-only code and original documentation. Catalog metadata refers to original publishers; their works are not distributed. Per-entry rights remain in manuals.json and do not inherit the software license.

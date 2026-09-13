@@ -1,6 +1,6 @@
 # End of the World Bot — Linux portable alpha
 
-Version **0.1.0-alpha.1**. A local document search tool with source excerpts and
+Version **0.1.0-alpha.2**. A local document search tool with source excerpts and
 file/page citations. This download includes a working installer, portable launcher,
 and complete GPL-3.0-only application source. It is **not a bootable operating
 system, bundled AI appliance, or universal installer**. No Python runtime, pip
@@ -26,7 +26,7 @@ use `PYTHON=/path/to/python3 sh launch.sh doctor` (quote a path containing space
 ## Open the download
 
 Download the versioned `linux-python.zip` and `SHA256SUMS` from the
-[GitHub release](https://github.com/smilidon/end-of-the-world-bot/releases/tag/v0.1.0-alpha.1).
+[GitHub release](https://github.com/smilidon/end-of-the-world-bot/releases/tag/v0.1.0-alpha.2).
 Verify the ZIP before extraction from the folder containing both files:
 
 ```sh
@@ -34,7 +34,7 @@ sha256sum --ignore-missing -c SHA256SUMS
 ```
 
 Ensure the ZIP itself reports `OK`. Extract with your file manager or
-`python3 -m zipfile -e end-of-the-world-bot-0.1.0-alpha.1-linux-python.zip .`.
+`python3 -m zipfile -e end-of-the-world-bot-0.1.0-alpha.2-linux-python.zip .`.
 Open a terminal inside the extracted folder. These instructions always use `sh`
 so executable permission bits are unnecessary on FAT or a `noexec` flash drive:
 
@@ -60,7 +60,7 @@ sh install.sh
 ```
 
 This copies the verified application into
-`~/.local/share/end-of-world-bot/0.1.0-alpha.1` and creates an empty `library/guides/`.
+`~/.local/share/end-of-world-bot/0.1.0-alpha.2` and creates an empty `library/guides/`.
 Open a terminal in that folder and use `sh launch.sh ...` there. For a different
 **new** folder (including a flash-drive folder), use:
 
@@ -126,3 +126,7 @@ application source, tests, manifests, and build scripts are inside this archive.
 No third-party runtime or libraries are redistributed, so their preparation and
 licenses remain separate; see [license audit](docs/LICENSE_AUDIT.md).
 This alpha retains the bounded-search and source limitations in [README.md](README.md).
+
+## Optional recovered manual downloads
+
+See [INSTALL_AND_DOWNLOAD.md](INSTALL_AND_DOWNLOAD.md) for a dry-run-first downloader, complete rights-aware inventory and reusable terminal-agent prompt. No manuals are bundled.

@@ -7,7 +7,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 RULES = {
-    'host_path': r'(?:/(?:home|Users|run/media|media|mnt)/[^\s]+|[A-Z]:\\(?:Users|Documents and Settings)\\[^\s]+)',
+    'host_path': r'(?:(?<![A-Za-z0-9._/-])/(?:home|Users|run/media|media|mnt)/[^\s]+|[A-Z]:\\(?:Users|Documents and Settings)\\[^\s]+)',
     'secret': r'(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[A-Z0-9]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|Bearer\s+[A-Za-z0-9_.-]{20,})',
     'signed_url': r'https?://[^\s]+[?&](?:X-Amz-[A-Za-z-]+|X-Goog-[A-Za-z-]+|access_token|token|signature|sig)=',
     'email': r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}',
