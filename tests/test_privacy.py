@@ -25,6 +25,7 @@ class Privacy(unittest.TestCase):
                 self.assertTrue(scan.inspect('source.txt', sample.encode(), {'source.txt'}))
         self.assertTrue(scan.inspect('library/data.txt', b'ordinary data', {'source.txt'}))
         self.assertFalse(scan.inspect('source.txt', b'Synthetic public source', {'source.txt'}))
+        self.assertFalse(scan.inspect('source.txt', b'https://www.cdc.gov/water-emergency/media/pdfs/example.pdf', {'source.txt'}))
 
     def test_deleted_sensitive_content_remains_detected_in_history(self):
         with tempfile.TemporaryDirectory() as td:
