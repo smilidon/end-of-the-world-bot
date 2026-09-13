@@ -22,4 +22,21 @@ these instructions are not evidence of a commit, push, or successful hosted CI.
 
 `RELEASE_FILES.txt` is the explicit source-package allowlist. The SHA-256 manifest
 covers those files except itself; `.git`, generated caches and runtime data are
-excluded. This is a source snapshot, not a wheel or bundled appliance installer.
+excluded. The Linux portable ZIP adds a user-local installer and launcher to this source
+snapshot; it is not a wheel, bundled runtime, or complete appliance.
+
+## Reproducible Linux portable release
+
+Run `python3 tools/build_release.py --output ../release-output` only after the
+tests, privacy scan, and source hash checks above pass. The output must be outside
+the repository and the archive must not already exist. The builder validates
+manifest names, rejects symlinks/traversal and mismatched hashes, and includes
+exactly the allowlisted source files. ZIP entries have fixed timestamps and plain
+file permissions; launch scripts are invoked with `sh`, including on noexec media.
+
+Use VERSION for a unique prerelease tag. Run hosted CI on the exact commit, merge
+under existing policies, and verify the merged tree before building for upload.
+Publish the ZIP, SHA256SUMS, START_HERE.md, LICENSE and NOTICE.md in a GitHub
+prerelease targeting that tested commit. The archive itself contains complete
+corresponding source. Download the published assets, verify their hashes, and
+exercise the downloaded launcher and installation before announcing the release.
