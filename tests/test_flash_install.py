@@ -217,8 +217,12 @@ class BrowserExport(unittest.TestCase):
             self.assertIn('guides/beacon.txt', page)
             self.assertIn('text page 1', page)
             self.assertNotIn('</script><script>attack()', page)
-            with self.assertRaises(FileExistsError):
+            with self.assertRaises(ValueError):
                 reference_browser.export(base, out)
+            # Verify existing output preserved (file unchanged) after refusal.
+            preserved = out.read_text()
+            self.assertIn('guides/beacon.txt', preserved)
+            self.assertIn('text page 1', preserved)
             with patch('reference_browser.MAX_CHUNKS', 0):
                 self.assertTrue(reference_browser.export(base, base / 'bounded.html')['truncated'])
 
