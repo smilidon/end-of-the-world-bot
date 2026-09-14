@@ -112,6 +112,7 @@ def verify(source=None, repo=None, ref=None, expected_sha=None):
             else:
                 run(['sh', target / 'launch.sh', 'ask', 'beacon', '--model', 'NOT_INSTALLED'], ok=False, label='database: inference refused')
                 run(['sh', target / 'launch.sh', 'document'], input='{}', ok=False, label='database: document tool refused')
+                run(['sh', target / 'launch.sh', 'network-diagnose'], input='', ok=False, label='database: network diagnosis refused')
             incoming = target / 'data/intake/lantern.md'
             incoming.write_text('SYNTHETIC cobalt lantern in the teal cabinet. Fixture only. ' * 3)
             before_scan = hashes(target)
@@ -143,6 +144,8 @@ def verify(source=None, repo=None, ref=None, expected_sha=None):
             installs.append((mode, target))
         fixture_code = 'import sys,unittest;sys.path.insert(0,sys.argv[1]);suite=unittest.defaultTestLoader.discover(sys.argv[1]+"/tests",pattern="test_diagnostic_logs.py");result=unittest.TextTestRunner().run(suite);sys.exit(not result.wasSuccessful())'
         run([sys.executable, '-I', '-B', '-c', fixture_code, checkout], label='approved diagnostic discovery/scan: isolated fixtures, no live log reads')
+        network_code = 'import sys,unittest;sys.path.insert(0,sys.argv[1]);suite=unittest.defaultTestLoader.discover(sys.argv[1]+"/tests",pattern="test_network_diagnostics.py");result=unittest.TextTestRunner().run(suite);sys.exit(not result.wasSuccessful())'
+        run([sys.executable, '-I', '-B', '-c', network_code, installs[0][1]], label='installed network diagnosis: Linux fixtures, consent, Wi-Fi bounds, privacy and printable report; no physical scan')
         # Simulate deletion only by hiding our disposable source copy. Never touch the caller checkout.
         checkout.rename(base / 'source parked to simulate deletion')
         for mode, target in installs:

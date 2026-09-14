@@ -151,3 +151,10 @@ This alpha retains the bounded-search and source limitations in [README.md](READ
 ## Optional recovered manual downloads
 
 See [INSTALL_AND_DOWNLOAD.md](INSTALL_AND_DOWNLOAD.md) for a dry-run-first downloader, complete rights-aware inventory and reusable terminal-agent prompt. No manuals are bundled.
+
+## Optional Linux network observations (Bot only)
+
+Run `sh launch.sh network-diagnose` to preview a limited read-only scope before
+confirming. Wi-Fi scanning requires a separate second confirmation and optional
+preinstalled `iw`; no joining, credentials, repairs or elevation. Reports can be
+saved/printed within `workspace/`. See [network boundaries](docs/NETWORK_DIAGNOSTICS.md).

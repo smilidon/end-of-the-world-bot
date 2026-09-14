@@ -79,8 +79,14 @@ network/write traps, prompt-injection-like data and prompt-budget fallbacks.
 The extended fresh-clone verifier checks both-mode add/change/failure preservation,
 fixture-only log discovery/scan, compact no-call fallback and moved-folder reads.
 
-**Explicitly excluded from this PR:** consented network diagnostic probes and
-arbitrary user-pasted URL/software-update workflows. No implementation or safety
-qualification for those features is claimed. The existing catalog-pinned manual
-downloader remains unchanged; it is not a general URL importer/updater. These need
-a separately scoped implementation and test review, not a hidden network fallback.
+### Narrow network milestone
+
+Confirmed Linux network observations and an optional second-consent Wi-Fi scan
+are covered by synthetic `test_network_diagnostics.py` tests and the installed-Bot
+fresh-clone check. Database mode refuses the diagnostic command. Tests use no
+live host sources or physical scan; see [scope and qualification](NETWORK_DIAGNOSTICS.md).
+PR evidence records the exact pushed SHA and current test counts.
+
+**Still excluded from this PR:** arbitrary user-pasted URL/software-update
+workflows. Their unfinished local drafts are not packaged or launcher-accessible.
+The catalog-pinned manual downloader remains unchanged.

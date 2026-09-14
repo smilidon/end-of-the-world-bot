@@ -50,3 +50,10 @@ failed rebuilds. Diagnostic scan is a DIFFERENT boundary: it never executes even
 an extractor, reads only confirmed fixed Linux log ranges, refuses root and writes
 no raw logs. Explicit report saving alone writes the confined workspace. Compact
 model envelopes contain no tool catalog/history and cannot authorize any action.
+
+The separate owner-invoked `network-diagnose` CLI is not exposed to inference.
+Its default local reads execute no commands or network requests. Optional Wi-Fi
+scanning is a narrow second-consent exception: fixed `iw` argv, byte/time bounds,
+no shell/elevation/credentials/joining/config changes. Reports omit raw identities
+and apply secret redaction; no data is indexed or sent to a model. See
+[exact scope and limits](docs/NETWORK_DIAGNOSTICS.md).

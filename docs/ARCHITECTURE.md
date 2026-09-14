@@ -107,3 +107,12 @@ All deterministic handlers remain outside inference. Optional model envelopes
 whitelist only current question and a few small cited excerpts plus one short
 instruction. Tiny/standard budgets reject overload and return a labeled source
 fallback; tool catalogs/history/whole documents are not serialized.
+
+### Separate owner-consented network adapter
+
+`network_diagnostics` is an owner-only interactive CLI, not a model tool. Fixed
+Linux metadata plan → exact consent → bounded source reads → anonymous state/count
+observations. A second consent permits only fixed `iw dev NAME scan`, with byte/time
+bounds and no shell. It never joins or changes networks. Explicit report persistence
+uses the existing scoped workspace. No model, index or URL/update capability is
+added. See [network boundaries](NETWORK_DIAGNOSTICS.md).

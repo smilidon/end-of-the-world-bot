@@ -186,3 +186,6 @@ index-move procedure remains for legacy external libraries, not this managed int
 Bot additionally supports [confirmed Linux log discovery](OFFLINE_DIAGNOSTICS.md)
 and [tiny/standard compact prompts](COMPACT_CONTEXT.md). None of these changes
 automatically downloads models or touches another installation.
+
+Bot mode also includes [optional confirmed network observations](NETWORK_DIAGNOSTICS.md).
+They require no model. Database-only mode does not expose diagnostic commands.

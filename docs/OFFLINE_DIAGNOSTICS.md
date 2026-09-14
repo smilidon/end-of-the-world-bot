@@ -136,3 +136,10 @@ before evidence/report processing; raw log content is not persisted. Reports cit
 the approved source and parsed timestamp, show assumptions and plausible causes,
 and retain the warning that redaction cannot guarantee privacy. A saved printable
 report is an explicit workspace write, not an incidental effect of scanning.
+
+## Separate network observation workflow
+
+The no-command/no-network guarantees above describe log diagnosis. The distinct
+`network-diagnose` command provides confirmed Linux configuration reads and an
+optional second-consent Wi-Fi scan. It does not extend the log API or model tools.
+See [exact network scope and command exception](NETWORK_DIAGNOSTICS.md).

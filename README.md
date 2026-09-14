@@ -185,8 +185,14 @@ Read the generated failure/resume report. Reruns verify and skip matching files;
 Report exact installed version and destination, successful/skipped/failed/manual-action counts, disk usage, tested sample references, and what remains unverified. Distinguish historical source hashes, current header checks, fixture tests, real publisher downloads and real host installation. Do not claim all manuals downloaded if any were skipped or failed.
 ```
 
-### Scope boundary for follow-up requests
+### Optional confirmed network observations
 
-This PR's diagnostics are offline. Consented network probes and arbitrary pasted-URL
-imports/software updates are **not implemented** and are excluded. The existing
-explicit, catalog-pinned manual downloader is not a general URL/update mechanism.
+Bot mode now offers `sh launch.sh network-diagnose`: Linux adapter/IPv4-route/DNS
+configuration observations after an exact scope confirmation, with a separately
+confirmed optional Wi-Fi scan. No model, repairs, joining networks or credential
+access. Reports are private, bounded workspace documents. See
+[network scope, consent and limits](docs/NETWORK_DIAGNOSTICS.md).
+
+User-pasted URL imports and software-update workflows remain **unimplemented in
+this PR**. Their unfinished drafts are not packaged or exposed by the launcher.
+The existing catalog-pinned manual downloader is not a general URL/update mechanism.

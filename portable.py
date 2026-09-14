@@ -93,13 +93,19 @@ def launch(arguments):
     parser = argparse.ArgumentParser(description='Portable offline reference CLI; see START_HERE.md')
     parser.add_argument('--library', type=Path, default=ROOT / 'library',
                         help='Dedicated document folder (default: library beside launch.sh)')
-    parser.add_argument('command', choices=('doctor', 'index', 'search', 'ask', 'serve', 'browser', 'document', 'diagnose', 'intake-scan', 'reindex', 'calc', 'diagnose-scan'))
+    parser.add_argument('command', choices=('doctor', 'index', 'search', 'ask', 'serve', 'browser', 'document', 'diagnose', 'intake-scan', 'reindex', 'calc', 'diagnose-scan', 'network-diagnose'))
     args, remainder = parser.parse_known_args(arguments)
     sys.path.insert(0, str(ROOT))
     config_path = ROOT / 'portable-install.json'
     config = json.loads(regular_path(ROOT, 'portable-install.json').read_text()) if config_path.exists() else {'mode': 'bot'}
-    if config.get('mode') == 'database' and args.command in {'ask', 'document', 'diagnose', 'diagnose-scan'}:
+    if config.get('mode') == 'database' and args.command in {'ask', 'document', 'diagnose', 'diagnose-scan', 'network-diagnose'}:
         raise ValueError('Database mode has no inference or document tools; use browser/search')
+    if args.command == 'network-diagnose':
+        if remainder or any(arg == '--library' or arg.startswith('--library=') for arg in arguments):
+            parser.error('Interactive installed-root workflow; no extra arguments or path overrides')
+        import network_diagnostics
+        network_diagnostics.interactive(ROOT)
+        return
     if args.command == 'calc':
         if len(remainder) != 1:
             parser.error('calc accepts one quoted arithmetic expression')
