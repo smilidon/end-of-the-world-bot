@@ -1,6 +1,7 @@
 .github/workflows/tests.yml
 .gitignore
 AddressProbe.java
+CHANGELOG.md
 CorridorProbe.java
 FILE_MANIFEST.sha256
 INSTALL_AND_DOWNLOAD.md
