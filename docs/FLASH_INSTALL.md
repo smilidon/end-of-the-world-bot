@@ -128,6 +128,13 @@ It is not a sandbox against an owner/malicious local process changing mounts or
 moving directories with OS privileges. Linux filesystem support for these calls is
 required. Test your selected filesystem; no physical FAT/exFAT drive was qualified.
 
+## Optional bounded offline diagnostic observations
+
+Bot also provides `sh launch.sh diagnose` for explicitly pasted log text. It does
+not inspect the host or run commands. Redacted observations use separate compact
+Markdown references and can become a printable workspace document. See
+[offline diagnostics, privacy limits and air-gapped guide intake](OFFLINE_DIAGNOSTICS.md).
+
 ## Optional model on USB
 
 Choose `--models usb` only with `--drive` (or a temporary simulation). This creates
@@ -170,3 +177,12 @@ writes to a real removable drive. `--simulate-drive` accepts only a dedicated
 existing directory on the host temporary filesystem, not a mounted drive.
 Source-copy proof, fresh-GitHub-clone proof, physical USB, actual disconnected/
 noexec-mount tests and real model inference are separate claims.
+
+## Offline updates and compact operation
+
+Use `data/intake/`, `sh launch.sh intake-scan` and `sh launch.sh reindex` for
+[atomic document updates](DOCUMENT_INTAKE.md) in either profile. The old manual
+index-move procedure remains for legacy external libraries, not this managed intake.
+Bot additionally supports [confirmed Linux log discovery](OFFLINE_DIAGNOSTICS.md)
+and [tiny/standard compact prompts](COMPACT_CONTEXT.md). None of these changes
+automatically downloads models or touches another installation.

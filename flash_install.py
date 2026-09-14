@@ -167,8 +167,11 @@ def main(root, arguments):
     validate_target(target, root, drive)
     portable.install(target)
     try:
+        (target / 'data/intake').mkdir(parents=True, mode=0o700)
+        (target / 'data/generations').mkdir(mode=0o700)
         if a.mode == 'bot':
             (target / 'workspace').mkdir(mode=0o700)
+            (target / 'diagnostics/guides').mkdir(parents=True, mode=0o700)
         config = {'mode': a.mode, 'model_location': 'models' if a.models == 'usb' else 'host'}
         (target / 'portable-install.json').write_text(json.dumps(config, indent=2) + '\n')
         if a.models == 'usb':

@@ -35,3 +35,18 @@ answer-only. Browser snapshots escape source text, contain no external assets an
 have no network access under their CSP. They are private copies of indexed content;
 protect the flash drive and retain original content licenses. See
 [flash installation boundaries](docs/FLASH_INSTALL.md).
+
+Offline diagnostics accepts explicit pasted text only. Likely credentials are
+redacted before guide persistence, indexing and report output; redaction is not a
+privacy guarantee. Raw logs are not stored or indexed. Diagnostic guide files are
+a distinct bounded collection, never a system-log/file-browser capability. All
+suggestions come from fixed application rules, not log/guide instructions.
+
+Managed reindexing reads only flat `data/intake` and supported `library/guides`
+files, with no path override, links, devices or executable/config content. PDF
+extraction uses fixed Poppler arguments and bounds, never a user-selected command.
+One atomic publication commits CLI/browser state; prior sources/indexes survive
+failed rebuilds. Diagnostic scan is a DIFFERENT boundary: it never executes even
+an extractor, reads only confirmed fixed Linux log ranges, refuses root and writes
+no raw logs. Explicit report saving alone writes the confined workspace. Compact
+model envelopes contain no tool catalog/history and cannot authorize any action.

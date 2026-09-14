@@ -44,6 +44,20 @@ The ZIP includes the installer, launcher, and complete application source, not a
 Python runtime, models, maps, or documents. It is not bootable or a complete chat
 appliance. Existing install folders are never overwritten.
 
+## Offline document updates and compact models
+
+Put approved text/Markdown/PDF files in installed `data/intake/`; use
+`sh launch.sh intake-scan` then `sh launch.sh reindex`. Both modes switch to the
+new results atomically; failed rebuilds retain prior search. See
+[document intake](docs/DOCUMENT_INTAKE.md) and [tiny/standard context budgets](docs/COMPACT_CONTEXT.md).
+
+## Offline diagnostic observations
+
+Bot can analyze explicitly pasted log text against a separate small Markdown
+reference collection, without a model, commands or network. Linux also supports an explicitly confirmed,
+read-only scan of a fixed small log allowlist.
+See [safe intake, redaction, limitations and printable reports](docs/OFFLINE_DIAGNOSTICS.md).
+
 ## Chat interface
 
 See [Open WebUI Pipe setup](docs/CHAT.md). The CLI below is also available for
@@ -94,8 +108,9 @@ python3 bot.py --root library ask 'Where are the beacon batteries?' --model YOUR
 
 The model name is required; no model is silently downloaded. CPU mode is the
 default (`--num-gpu 0`); `--threads` and `--num-gpu` are configurable.
-The optional query retains the original 4,096-token context and short 64-token
-answer budget. It sends evidence only to numeric loopback, disables proxies and
+The optional query defaults to a tiny 2,048-token context with a 128-token output
+ceiling; `--profile standard` uses 4,096/192. Compact serialization rejects over-budget
+prompts and labels source-only fallbacks instead of clipping generated answers. It sends evidence only to numeric loopback, disables proxies and
 redirects, and supplies source IDs separately. Generated text may still be wrong.
 
 ## Optional maps and printable directions
@@ -169,3 +184,9 @@ No sudo, drive formatting, services, public network exposure, secret collection,
 Read the generated failure/resume report. Reruns verify and skip matching files; changed user files remain untouched. Incomplete transfers restart at the file level. Do not erase data to force success. With pdftotext present, index the new library, run a representative search and a Read: guides/<downloaded-file>.pdf query, and verify actual source/page references. If an index already exists, preserve it and explain the explicit rebuild procedure.
 Report exact installed version and destination, successful/skipped/failed/manual-action counts, disk usage, tested sample references, and what remains unverified. Distinguish historical source hashes, current header checks, fixture tests, real publisher downloads and real host installation. Do not claim all manuals downloaded if any were skipped or failed.
 ```
+
+### Scope boundary for follow-up requests
+
+This PR's diagnostics are offline. Consented network probes and arbitrary pasted-URL
+imports/software updates are **not implemented** and are excluded. The existing
+explicit, catalog-pinned manual downloader is not a general URL/update mechanism.

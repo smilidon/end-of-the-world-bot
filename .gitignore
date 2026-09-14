@@ -23,3 +23,5 @@ workspace/
 models/
 portable-install.json
 reference*.html
+diagnostics/
+data/

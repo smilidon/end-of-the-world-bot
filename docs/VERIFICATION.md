@@ -57,3 +57,30 @@ Publication remains a separate publisher-owned action.
   trial, USB library, service, Open WebUI database or user documents were changed.
   Hardware/model speed, physical media/power-loss behavior, native non-Linux hosts
   and live third-party downloads remain outside this feature qualification.
+
+### Bounded diagnostics follow-up
+
+Seven focused tests cover secret redaction before storage/index/report output,
+untrusted prompt-like logs/guides, exact evidence and uncertainty, command/network
+traps, no path intake, offline Markdown updates, index separation, limits and
+existing-report preservation. The clean-clone verifier now also exercises imported
+guide redaction, offline update/reindex, ENOSPC observations, printable diagnostic
+output and unchanged main-library index. The PR records the new exact head and
+full-suite count; earlier 56-test evidence above describes the original core build.
+
+### Complete offline follow-up scope
+
+The follow-up adds bounded TXT/MD/PDF intake with atomic CLI/browser generation
+publication, confirmed Linux log discovery (including a cancellation-safe menu),
+redacted deterministic diagnostics, arithmetic and tiny/standard model envelopes.
+Focused tests exercise rebuild/export/commit failures, changed/missing sources,
+PDF extraction/citations, forbidden log paths/rotation/expired consent, no-command/
+network/write traps, prompt-injection-like data and prompt-budget fallbacks.
+The extended fresh-clone verifier checks both-mode add/change/failure preservation,
+fixture-only log discovery/scan, compact no-call fallback and moved-folder reads.
+
+**Explicitly excluded from this PR:** consented network diagnostic probes and
+arbitrary user-pasted URL/software-update workflows. No implementation or safety
+qualification for those features is claimed. The existing catalog-pinned manual
+downloader remains unchanged; it is not a general URL importer/updater. These need
+a separately scoped implementation and test review, not a hidden network fallback.

@@ -49,3 +49,34 @@ empty until an explicit separate download, and may load extremely slowly.
 FAT/exFAT permission semantics, physical USB reliability, power-loss recovery and
 native Windows/macOS are unqualified; the shell launcher avoids executable-bit
 requirements but does not bundle a host runtime.
+
+Optional offline diagnostics caps pasted logs at 64 KiB and imports at 32 Markdown
+guides of 32 KiB each (1 MiB total), plus four small bundled first-party guides. Its
+separate FTS5 index exists only in memory, with a few MiB of expected overhead, not
+a measured guarantee. It adds no inference, external package or persistent log store.
+
+## Low-footprint model tiers (planning estimates, not qualification)
+
+| Mode | Intended role | Rough host planning guidance |
+| --- | --- | --- |
+| Browser/no model | Static offline reference search, including low-end devices/phones | Recent browser; small library; no Python/server/model on the reader. Mobile viewport tested, not a physical-phone benchmark. |
+| 0.5–1.5B, 4-bit | Optional short routing/rephrasing only; never safety-critical reasoning | About 4–8 GB host RAM with OS/runtime headroom; model quality and fit unqualified. |
+| 3–4B, 4-bit | Practical lower target for useful cited assistance while deterministic retrieval does the work | About 8–16 GB RAM; host SSD; GPU optional; model/runtime/context determine fit. |
+| 7–8B, 4-bit | Optional stronger local model | About 16–32 GB RAM, or a suitable older gaming GPU with enough VRAM and host RAM; CPU-only can be slow. |
+
+These are approximate budgets, not speed guarantees or promises that every model
+follows citations correctly. Phone inference is **not qualified**; phone static
+database reading is the supported use case. Static exports need only a browser
+after preparation; large pages may still strain very small devices.
+
+Owner-reported prior baseline: 4B, 4096 context, 8 GPU + 25 CPU layers was usable
+around 29–61 seconds for ~955–2457 input tokens. ~17.5K prompt/context inflation
+caused multi-minute slowness. This historical observation was not re-benchmarked
+by this PR. Tiny/standard profiles prevent full-history/tool-catalog inflation;
+see [compact prompt bounds and fallback](COMPACT_CONTEXT.md). Slower inference
+is acceptable and optional; no-model search remains the dependable fallback.
+
+Managed intake can hold up to 128 MiB raw inputs plus copied generations, indexes
+and reference pages. Budget at least several hundred MiB free for rebuilds and
+more for retained history; count/size limits do not guarantee a rebuild fits the
+remaining disk. Failures leave the prior generation active.

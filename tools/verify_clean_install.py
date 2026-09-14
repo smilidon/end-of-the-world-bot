@@ -93,20 +93,62 @@ def verify(source=None, repo=None, ref=None, expected_sha=None):
                 printed = tool({'action': 'print', 'name': 'Directions.md'})
                 if 'Reviewed synthetic directions.' not in (target / 'workspace' / printed['name']).read_text():
                     raise AssertionError('Printable document not created')
+                def diagnose(request):
+                    return json.loads(run(['sh', target / 'launch.sh', 'diagnose'], input=json.dumps(request), label='diagnostics: ' + request['action']).stdout)
+                main_index = target / 'library/local-qa/guides.sqlite'
+                index_before = hashlib.sha256(main_index.read_bytes()).hexdigest()
+                imported = diagnose({'action': 'import-guide', 'name': 'Offline fixture.md', 'text': '# Storage\nInspect free space. password=synthetic-sensitive-value'})
+                if 'synthetic-sensitive-value' in (target / 'diagnostics/guides/Offline fixture.md').read_text():
+                    raise AssertionError('Guide redaction failed')
+                diagnose({'action': 'import-guide', 'name': 'Offline fixture.md', 'text': '# Storage\nUpdated offline guide.', 'expected_sha256': imported['sha256']})
+                diagnose({'action': 'reindex'})
+                diagnosis = diagnose({'action': 'analyze', 'text': '2026-09-13T12:34:56Z Linux ENOSPC password=synthetic-sensitive-value', 'report_name': 'Diagnostic observations.md'})
+                if len(diagnosis['findings']) != 1 or diagnosis['findings'][0]['category'] != 'storage' or 'synthetic-sensitive-value' in json.dumps(diagnosis):
+                    raise AssertionError('Evidence/redaction diagnostic proof failed')
+                tool({'action': 'print', 'name': 'Diagnostic observations.md'})
+                if hashlib.sha256(main_index.read_bytes()).hexdigest() != index_before:
+                    raise AssertionError('Diagnostic reindex changed main library index')
+                receipt['diagnostics'] = {'evidence': 'ENOSPC', 'secret_redacted': True, 'offline_guide_update': True, 'main_index_unchanged': True, 'printable_report': True}
             else:
                 run(['sh', target / 'launch.sh', 'ask', 'beacon', '--model', 'NOT_INSTALLED'], ok=False, label='database: inference refused')
                 run(['sh', target / 'launch.sh', 'document'], input='{}', ok=False, label='database: document tool refused')
+            incoming = target / 'data/intake/lantern.md'
+            incoming.write_text('SYNTHETIC cobalt lantern in the teal cabinet. Fixture only. ' * 3)
+            before_scan = hashes(target)
+            run(['sh', target / 'launch.sh', 'intake-scan'], label=mode + ': explicit intake scan')
+            if hashes(target) != before_scan:
+                raise AssertionError('Intake scan wrote files')
+            run(['sh', target / 'launch.sh', 'reindex'], label=mode + ': atomic add/reindex')
+            incoming.write_text('SYNTHETIC cobalt lantern now in the violet cabinet. Fixture only. ' * 3)
+            run(['sh', target / 'launch.sh', 'reindex'], label=mode + ': offline change/reindex')
+            updated = json.loads(run(['sh', target / 'launch.sh', 'search', 'cobalt lantern'], label=mode + ': updated search').stdout)
+            if 'violet cabinet' not in updated['sources'][0]['text'] or 'violet cabinet' not in (target / 'reference.html').read_text():
+                raise AssertionError('CLI/browser did not share updated content')
+            old_page = (target / 'reference.html').read_bytes()
+            bad = target / 'data/intake/invalid.pdf';bad.write_bytes(b'not a PDF')
+            run(['sh', target / 'launch.sh', 'reindex'], ok=False, label=mode + ': failed rebuild preserved')
+            if (target / 'reference.html').read_bytes() != old_page:
+                raise AssertionError('Failed rebuild replaced valid publication')
+            bad.rename(base / (mode + ' rejected synthetic PDF'))
+            receipt.setdefault('reindex', {})[mode] = {'updated_excerpt': 'violet cabinet', 'source': updated['sources'][0]['source'], 'failure_preserved': True}
+            run(['sh', target / 'launch.sh', 'calc', '(8 + 4) / 3'], label=mode + ': deterministic arithmetic')
+            if mode == 'bot':
+                limited = json.loads(run(['sh', target / 'launch.sh', 'ask', 'cobalt lantern', '--model', 'NOT_INSTALLED', '--prompt-budget', '1'], label='compact budget: no-model fallback').stdout)
+                if limited['model_called'] or limited['answer_status'] != 'answer may be limited':
+                    raise AssertionError('Budget fallback attempted inference')
             before = hashes(target)
             run([*args, '--confirm-target', target], ok=False, label=mode + ': reinstall refused')
             if hashes(target) != before:
                 raise AssertionError('Reinstall changed existing installation')
             installs.append((mode, target))
+        fixture_code = 'import sys,unittest;sys.path.insert(0,sys.argv[1]);suite=unittest.defaultTestLoader.discover(sys.argv[1]+"/tests",pattern="test_diagnostic_logs.py");result=unittest.TextTestRunner().run(suite);sys.exit(not result.wasSuccessful())'
+        run([sys.executable, '-I', '-B', '-c', fixture_code, checkout], label='approved diagnostic discovery/scan: isolated fixtures, no live log reads')
         # Simulate deletion only by hiding our disposable source copy. Never touch the caller checkout.
         checkout.rename(base / 'source parked to simulate deletion')
         for mode, target in installs:
             moved = drive / (mode + ' moved installation')
             target.rename(moved)
-            run(['sh', moved / 'launch.sh', 'search', 'Read: guides/beacon.txt'], label=mode + ': moved-folder read without source')
+            run(['sh', moved / 'launch.sh', 'search', 'Read: guides/legacy-guides/beacon.txt'], label=mode + ': moved-folder read without source')
         if hashes(sentinels) != old:
             raise AssertionError('Synthetic pre-existing data changed')
         receipt['checks'].append({'check': 'all five synthetic existing-data sentinels unchanged', 'exit': 0})

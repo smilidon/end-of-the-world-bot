@@ -93,13 +93,43 @@ def launch(arguments):
     parser = argparse.ArgumentParser(description='Portable offline reference CLI; see START_HERE.md')
     parser.add_argument('--library', type=Path, default=ROOT / 'library',
                         help='Dedicated document folder (default: library beside launch.sh)')
-    parser.add_argument('command', choices=('doctor', 'index', 'search', 'ask', 'serve', 'browser', 'document'))
+    parser.add_argument('command', choices=('doctor', 'index', 'search', 'ask', 'serve', 'browser', 'document', 'diagnose', 'intake-scan', 'reindex', 'calc', 'diagnose-scan'))
     args, remainder = parser.parse_known_args(arguments)
     sys.path.insert(0, str(ROOT))
     config_path = ROOT / 'portable-install.json'
     config = json.loads(regular_path(ROOT, 'portable-install.json').read_text()) if config_path.exists() else {'mode': 'bot'}
-    if config.get('mode') == 'database' and args.command in {'ask', 'document'}:
+    if config.get('mode') == 'database' and args.command in {'ask', 'document', 'diagnose', 'diagnose-scan'}:
         raise ValueError('Database mode has no inference or document tools; use browser/search')
+    if args.command == 'calc':
+        if len(remainder) != 1:
+            parser.error('calc accepts one quoted arithmetic expression')
+        from compact_context import calculate
+        print(json.dumps({'answer': calculate(remainder[0]), 'model_called': False}))
+        return
+    if args.command in {'intake-scan', 'reindex'}:
+        if remainder or any(arg == '--library' or arg.startswith('--library=') for arg in arguments):
+            parser.error('Intake uses only installed data/intake and library/guides; no path overrides')
+        import document_intake
+        result = document_intake.reindex(ROOT) if args.command == 'reindex' else document_intake.summarize(document_intake.inventory(ROOT)[0], published=False, scan_only=True)
+        print(json.dumps(result, indent=2))
+        if result.get('counts', {}).get('failed'):
+            raise SystemExit(1)
+        return
+    if not any(arg == '--library' or arg.startswith('--library=') for arg in arguments) and args.command in {'index', 'search', 'ask', 'serve', 'browser'}:
+        import document_intake
+        args.library = document_intake.active_library(ROOT)
+    if args.command == 'diagnose-scan':
+        if remainder:
+            parser.error('diagnose-scan uses an interactive fixed-scope menu; no file paths')
+        import offline_diagnostics
+        offline_diagnostics.interactive(ROOT)
+        return
+    if args.command == 'diagnose':
+        if remainder:
+            parser.error('diagnose reads one explicit JSON/text request from stdin; no file paths')
+        import offline_diagnostics
+        offline_diagnostics.main(ROOT)
+        return
     if args.command == 'document':
         if remainder:
             parser.error('document reads one JSON request from stdin; no extra arguments')
@@ -158,7 +188,7 @@ def main():
             flash_install.main(ROOT, sys.argv[2:])
         else:
             launch(sys.argv[1:] or ['--help'])
-    except (ValueError, OSError, EOFError, sqlite3.Error, subprocess.SubprocessError) as exc:
+    except (ValueError, OSError, EOFError, SyntaxError, sqlite3.Error, subprocess.SubprocessError) as exc:
         print('End of the World Bot: ' + str(exc), file=sys.stderr)
         raise SystemExit(1)
 

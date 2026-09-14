@@ -86,3 +86,24 @@ library. The request cannot choose the root. The existing model has no tool loop
 a trusted caller/user submits reviewed edits. Printable HTML escapes all document
 content. No new network or host-administration authority is introduced.
 See [boundaries and workflow](FLASH_INSTALL.md).
+
+`offline_diagnostics` is an opt-in Bot extension: pasted text → heuristic redaction
+→ deterministic token/error extraction → separate in-memory FTS5 guide references
+→ evidence/uncertainty/safe-check report. Raw logs never reach the main library or
+a persistent index. Only reviewed code defines suggestions; untrusted guide text
+is quoted evidence, never instructions. Optional reports use the confined workspace.
+
+### Managed intake, confirmed scans and compact inference
+
+Explicit `data/intake` + legacy safe guides → validated immutable generation → FTS5
++ HTML + hash/provenance → one atomic reference.html publication marker shared by
+CLI and browser. Old generations remain valid; failed rebuilds do not replace them.
+
+Linux diagnostic plan reads only fixed-allowlist metadata; explicit matching scope
+confirmation enables bounded, timestamp-filtered read-only tails. Redaction precedes
+analysis/reporting. No commands, elevation, configuration writes or network path.
+
+All deterministic handlers remain outside inference. Optional model envelopes
+whitelist only current question and a few small cited excerpts plus one short
+instruction. Tiny/standard budgets reject overload and return a labeled source
+fallback; tool catalogs/history/whole documents are not serialized.

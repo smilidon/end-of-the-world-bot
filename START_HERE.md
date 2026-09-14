@@ -86,6 +86,14 @@ allowlisted release files, not a library you may have added to the source folder
 If disk space or permissions interrupt installation, the new partial destination
 is retained; choose another new folder after correcting the problem.
 
+## Managed offline updates (current source)
+
+Copy approved `.txt`, `.md` or extractable PDFs to installed `data/intake/`, run
+`sh launch.sh intake-scan` then `sh launch.sh reindex`, and reload `reference.html`.
+Both profiles use the new snapshot; failures preserve the old search and page. See
+[bounded intake and recovery](docs/DOCUMENT_INTAKE.md). The examples below also
+remain valid for the legacy manually managed library.
+
 ## Try a synthetic document, with no model or internet
 
 Inside your portable or installed folder:

@@ -83,6 +83,8 @@ def main():
         p.add_argument('question')
         if name=='ask':
             p.add_argument('--model',required=True,help='Already installed Ollama model name')
+            p.add_argument('--profile', choices=['tiny', 'standard'], default='tiny')
+            p.add_argument('--prompt-budget', type=int, help='Optional smaller conservative prompt budget')
             p.add_argument('--num-gpu',type=int,default=0)
             p.add_argument('--threads',type=int,default=4)
             p.add_argument('--ollama-url',default='http://127.0.0.1:11434/api/chat')
