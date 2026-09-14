@@ -1,5 +1,7 @@
 # Security
 
+Private security reports: use the repository's private vulnerability reporting feature on GitHub (if enabled by the publisher) rather than opening a public issue or pull request. Do not disclose vulnerabilities, reproduction steps that expose private paths, or sensitive reproduction details in public channels. If private reporting is unavailable, send only non-sensitive reproduction details and avoid including credentials, device identifiers, private library contents, or real document paths.
+
 Operate against a dedicated, trusted local document directory. Never point the
 indexer at a home directory, account export or workspace. Filename filtering is
 defense in depth, not a classifier for private content. Source text is untrusted
