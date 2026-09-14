@@ -1,5 +1,16 @@
 # End of the World Bot — Linux portable alpha
 
+## New: interactive flash installation from current source
+
+Clone/download this repository and run **`sh install.sh`** for interactive drive
+selection. **Bot is the default**; browser/database-only mode generates a static
+offline reference page without inference. Models are optional and normally stay
+on the host. Preview with `sh install.sh --interactive --dry-run`.
+See [the complete flash installation guide](docs/FLASH_INSTALL.md) for confirmation,
+manual-content choices, confined documents/printing, USB model limits and clean-room
+verification. Existing files/services are preserved. No models or manuals are bundled.
+The release commands below still target historical alpha.2, not this new flow.
+
 Version **0.1.0-alpha.2**. A local document search tool with source excerpts and
 file/page citations. This download includes a working installer, portable launcher,
 and complete GPL-3.0-only application source. It is **not a bootable operating
@@ -19,8 +30,9 @@ packages, models, maps, or document collection are included.
 If prerequisites are missing, arrange them through your Linux distribution's
 package manager while online. Debian/Ubuntu package names are `python3` and
 `poppler-utils`; Fedora uses `python3` and `poppler-utils`. Some older distributions
-need a newer Python. The installer never downloads anything, runs sudo, changes
-host packages, or modifies shell settings. To choose an already-installed Python,
+need a newer Python. The installer never downloads runtimes/models, runs sudo, changes
+host packages, or modifies shell settings. Current-source installation offers
+manual downloads only after explicit selection. To choose an already-installed Python,
 use `PYTHON=/path/to/python3 sh launch.sh doctor` (quote a path containing spaces).
 
 ## Open the download
@@ -53,10 +65,10 @@ folder moves with it; no computer-specific path is saved. Paths containing space
 are supported. Use `sh "/path with spaces/to/launch.sh" doctor` from another folder.
 Do not make symlinks for application or library directories.
 
-## Option B: install a local copy
+## Option B: install a local copy without the flash wizard
 
 ```sh
-sh install.sh
+sh install.sh --dest "$HOME/.local/share/end-of-world-bot/0.1.0-alpha.2"
 ```
 
 This copies the verified application into
@@ -115,7 +127,8 @@ indexers against one library. A repeated install never modifies user data.
 There is no system-wide registration, background service, PATH edit, or separate
 uninstaller. To stop using this version, move its entire folder to a backup
 location. Before deleting any application folder yourself, save its `library/`,
-indexes, and any config files you created outside that folder. A portable folder
+indexes, `workspace/` documents/prints, reference HTML snapshots, optional `models/`,
+and any config files you created outside that folder. A portable folder
 contains your data: deleting it without a backup deletes that data too. Removing
 the original ZIP has no effect on an extracted or installed copy.
 

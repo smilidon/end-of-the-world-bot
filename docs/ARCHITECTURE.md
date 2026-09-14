@@ -66,3 +66,23 @@ Only backend/Pipe integration is qualified, not authenticated Open WebUI use.
 Private memory/recall, original history summarization, calculator dispatch,
 illustrated Guide generation and legacy Map dispatch remain omitted. No complete
 application parity is claimed. See [compatible API and setup](CHAT.md).
+
+## Portable profiles and confined documents
+
+`install.sh → launch.sh → portable.py → flash_install.py` reuses the verified
+allowlist installer. Linux `lsblk` is discovery only; fresh-target validation and
+exact path confirmation precede writes. `bootstrap.py --from-source` delegates to
+that same source rather than silently installing an old release.
+
+Both profiles retain the GPL source and the rights-aware manual catalog/downloader.
+Bot retains retrieval, optional local inference and optional chat/routing modules;
+database mode exports the same FTS5 source excerpts to `reference.html`, using only
+inline static assets and deterministic browser search. No inference/server is
+needed to read the export. Empty or truncated content is visibly identified.
+
+`document_workspace.Workspace` is a separate restricted create/read/update/print
+interface rooted by the owner at installed `workspace/`, outside the reference
+library. The request cannot choose the root. The existing model has no tool loop;
+a trusted caller/user submits reviewed edits. Printable HTML escapes all document
+content. No new network or host-administration authority is introduced.
+See [boundaries and workflow](FLASH_INSTALL.md).

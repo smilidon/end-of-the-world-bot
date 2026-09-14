@@ -26,3 +26,26 @@ measurement on the selected device.
 For a portable kit budget independently for power, cooling, storage reliability,
 display/input and an offline copy of recovery instructions. No exact battery
 runtime or untested hardware compatibility is promised.
+
+## Cheap/old hardware and flash installation
+
+Minimum software: Linux + Python 3.11 with SQLite FTS5 to install/prepare the
+library. No pip packages or GPU are needed for text search, static browser export
+or document printing. A recent browser alone can read a prepared `reference.html`
+offline. The smallest practical planning target is 2 CPU cores / 2 GB available
+RAM for a **small** text library and a lightweight browser; 4 GB is recommended.
+This is an estimate, not a measured 2 GB qualification. Modern full desktop browsers
+can dominate RAM usage. Export limits (10,000 chunks / 16 MiB text, plus JSON/browser
+copies) keep memory bounded; larger collections use CLI retrieval instead.
+
+Installer preflight requires 100 MiB free; reserve at least 1 GB for the small
+eligible manual collection, indexes, snapshots and headroom. A 4–8 GB drive can
+carry a small reference kit without models; plan separately for PDFs, archives,
+maps, optional tools and backups. Model tiers above remain estimates. Slower
+CPU-only inference is acceptable, but the existing bounded request can time out;
+use search/database mode if a chosen model is impractical. No model was benchmarked
+for this feature. Keep weights on the host SSD; USB model storage is opt-in,
+empty until an explicit separate download, and may load extremely slowly.
+FAT/exFAT permission semantics, physical USB reliability, power-loss recovery and
+native Windows/macOS are unqualified; the shell launcher avoids executable-bit
+requirements but does not bundle a host runtime.

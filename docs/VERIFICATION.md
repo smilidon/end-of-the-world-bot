@@ -31,3 +31,29 @@
 
 This qualifies a limited source snapshot, not the complete original chat appliance.
 Publication remains a separate publisher-owned action.
+
+## Portable flash feature qualification (source branch, 2026-09-13)
+
+- 56 synthetic tests cover existing behavior and both install profiles, exact
+  confirmation, dry-run including selected fetch, unsafe targets/media replacement,
+  scoped document create/read/update/print, stale edits and symlink/hardlink/FIFO
+  refusal. Explicit manual preparation is fixture-tested; no real publisher fetch
+  or inference was performed for this feature.
+- The reusable `tools/verify_clean_install.py` checks fresh temporary HOME/source/
+  simulated-drive installs, exact `R1` / `guides/beacon.txt text page 1 offset 0`
+  citations, browser export, unchanged existing-data sentinels, refused reinstall,
+  moved-folder use and simulated source deletion. Its remote mode requires an exact
+  expected branch SHA; the PR records the post-push fresh-GitHub-clone receipt.
+- The same two-mode journey passed in disposable Linux user/mount/network
+  namespaces: only loopback, zero external routes, TEST-NET connect returning
+  ENETUNREACH, and noexec/nosuid/nodev tmpfs with direct execution returning EACCES.
+  This is actual offline/noexec enforcement, not physical USB/FAT qualification.
+- Sandboxed Chromium 151.0.7922.34, offline context: file-only browser search and
+  source labels, no-match state, inert hostile source text, 1280px desktop and
+  390px mobile without horizontal overflow, no HTTP requests/page errors, and
+  synthetic document Print-to-PDF passed. Browser tooling is optional verification,
+  not a runtime dependency.
+- Source privacy, manifests and deterministic ZIP checks remain required. No real
+  trial, USB library, service, Open WebUI database or user documents were changed.
+  Hardware/model speed, physical media/power-loss behavior, native non-Linux hosts
+  and live third-party downloads remain outside this feature qualification.

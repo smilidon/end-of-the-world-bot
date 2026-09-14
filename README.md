@@ -1,5 +1,16 @@
 # End of the World Bot
 
+## Portable flash-drive installation (current source)
+
+Clone/download this repository and run **`sh install.sh`** for interactive drive
+selection. **Bot is the default**; browser/database-only mode generates a static
+offline reference page without inference. Models are optional and normally stay
+on the host. Preview with `sh install.sh --interactive --dry-run`.
+See [the complete flash installation guide](docs/FLASH_INSTALL.md) for confirmation,
+manual-content choices, confined documents/printing, USB model limits and clean-room
+verification. Existing files/services are preserved. No models or manuals are bundled.
+The release commands below still target historical alpha.2, not this new flow.
+
 A Linux-first, local reference assistant for an offline document library, with
 source citations and optional OsmAnd routing and printable directions.
 

@@ -3,10 +3,13 @@
 import argparse
 import contextlib
 import hashlib
+import json
 import os
 from pathlib import Path, PurePosixPath
 import re
 import shutil
+import sqlite3
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parent
@@ -90,8 +93,30 @@ def launch(arguments):
     parser = argparse.ArgumentParser(description='Portable offline reference CLI; see START_HERE.md')
     parser.add_argument('--library', type=Path, default=ROOT / 'library',
                         help='Dedicated document folder (default: library beside launch.sh)')
-    parser.add_argument('command', choices=('doctor', 'index', 'search', 'ask', 'serve'))
+    parser.add_argument('command', choices=('doctor', 'index', 'search', 'ask', 'serve', 'browser', 'document'))
     args, remainder = parser.parse_known_args(arguments)
+    sys.path.insert(0, str(ROOT))
+    config_path = ROOT / 'portable-install.json'
+    config = json.loads(regular_path(ROOT, 'portable-install.json').read_text()) if config_path.exists() else {'mode': 'bot'}
+    if config.get('mode') == 'database' and args.command in {'ask', 'document'}:
+        raise ValueError('Database mode has no inference or document tools; use browser/search')
+    if args.command == 'document':
+        if remainder:
+            parser.error('document reads one JSON request from stdin; no extra arguments')
+        import document_workspace
+        document_workspace.main(ROOT / 'workspace')
+        return
+    if args.command == 'browser':
+        p = argparse.ArgumentParser(description='Export static offline reference HTML into a NEW file')
+        p.add_argument('--output', type=Path, default=ROOT / 'reference-updated.html')
+        options = p.parse_args(remainder)
+        output = options.output.absolute()
+        for path in [output, *output.parents]:
+            if path.is_symlink():
+                raise ValueError('Symlink output paths are not supported')
+        import reference_browser
+        print(json.dumps(reference_browser.export(args.library.absolute(), output)))
+        return
     if args.command == 'doctor':
         if remainder:
             parser.error('doctor accepts no extra arguments')
@@ -128,17 +153,12 @@ def main():
     try:
         check_runtime()
         if len(sys.argv) > 1 and sys.argv[1] == '_install':
-            parser = argparse.ArgumentParser(description='Install into a NEW user-owned folder; never overwrite')
-            version = (ROOT / 'VERSION').read_text().strip()
-            if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+-alpha\.[0-9]+', version):
-                raise ValueError('Invalid release version')
-            parser.add_argument('--dest', type=Path,
-                                default=Path.home() / '.local/share/end-of-world-bot' / version)
-            args = parser.parse_args(sys.argv[2:])
-            install(args.dest)
+            sys.path.insert(0, str(ROOT))
+            import flash_install
+            flash_install.main(ROOT, sys.argv[2:])
         else:
             launch(sys.argv[1:] or ['--help'])
-    except (ValueError, OSError) as exc:
+    except (ValueError, OSError, EOFError, sqlite3.Error, subprocess.SubprocessError) as exc:
         print('End of the World Bot: ' + str(exc), file=sys.stderr)
         raise SystemExit(1)
 

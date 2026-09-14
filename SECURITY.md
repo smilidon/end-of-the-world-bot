@@ -25,3 +25,13 @@ otherwise report only non-sensitive reproduction details.
 
 No claim is made that the system is safe for personalized medical decisions,
 emergency treatment or navigation. Consult primary sources and qualified help.
+
+The portable document interface is intentionally narrower than a coding agent:
+only plain `.txt`/`.md` documents under its owner-fixed `workspace/` root, bounded
+content, no-follow descriptor-relative opens, no multi-link/nonregular files,
+exclusive create/print and hash-checked atomic updates. No delete, shell, config,
+host-path or network tool exists. The existing inference endpoint remains
+answer-only. Browser snapshots escape source text, contain no external assets and
+have no network access under their CSP. They are private copies of indexed content;
+protect the flash drive and retain original content licenses. See
+[flash installation boundaries](docs/FLASH_INSTALL.md).

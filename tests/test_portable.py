@@ -70,7 +70,7 @@ class Portable(unittest.TestCase):
         user_dir = self.base / 'synthetic user'
         user_dir.mkdir()
         env = dict(os.environ, HOME=str(user_dir), PYTHON=sys.executable)
-        self.run_script(script='install.sh', env=env)
+        self.run_script('--local', script='install.sh', env=env)
         destination = user_dir / '.local/share/end-of-world-bot' / (ROOT / 'VERSION').read_text().strip()
         self.assertTrue((destination / 'launch.sh').is_file())
         self.fixture(destination)

@@ -19,3 +19,7 @@ documents.json
 *.so
 *.dylib
 .env*
+workspace/
+models/
+portable-install.json
+reference*.html
