@@ -63,7 +63,7 @@ The minimal HTTP adapter preserves its /trial wire format, original text validat
 scoped verified-route printing and artifact reader/server. It delegates to existing
 retrieval, local inference and named/multistate routing functions, not a new engine.
 Only backend/Pipe integration is qualified, not authenticated Open WebUI use.
-Private memory/recall, original history summarization, calculator dispatch,
+Private memory/recall, original history summarization, legacy calculator dispatch,
 illustrated Guide generation and legacy Map dispatch remain omitted. No complete
 application parity is claimed. See [compatible API and setup](CHAT.md).
 

@@ -20,7 +20,7 @@ dwarf model storage. Keep free space for an extracted copy and a separate backup
 
 No model-capacity tier above was benchmarked in this release audit. Only Linux
 synthetic retrieval, citation and print tests were exercised. The optional model
-CLI uses a 4K context and defaults to CPU; model fit and throughput need separate
+CLI defaults to the tiny 2K profile (standard is 4K) and CPU; model fit and throughput need separate
 measurement on the selected device.
 
 For a portable kit budget independently for power, cooling, storage reliability,
