@@ -30,9 +30,20 @@ def get(name, cap):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--dest', type=Path, required=True, help='New user-owned install folder')
+    p.add_argument('--from-source', type=Path, help='Use a trusted local clone/download and its current installer; no release network fetch')
+    p.add_argument('--dest', type=Path, help='New user-owned install folder (required for pinned release)')
     p.add_argument('--fetch', action='store_true', help='Download all eligible personal noncommercial manuals after install')
-    a = p.parse_args()
+    a, extra = p.parse_known_args()
+    if a.from_source:
+        source = a.from_source.expanduser().resolve()
+        command = [sys.executable, '-I', '-B', str(source / 'portable.py'), '_install', *extra]
+        if a.dest:
+            command.extend(['--dest', str(a.dest)])
+        if a.fetch:
+            command.append('--fetch-manuals')
+        return subprocess.run(command).returncode
+    if extra or not a.dest:
+        p.error('Pinned release requires --dest; flash/mode/dry-run options require --from-source PATH')
     if not sys.platform.startswith('linux') or sys.version_info < (3, 11):
         p.error('Linux Python 3.11+ required. Windows: use a prepared WSL Linux terminal. Native Windows/macOS unqualified.')
     dest = Path(os.path.abspath(a.dest.expanduser()))

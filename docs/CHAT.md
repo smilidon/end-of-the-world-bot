@@ -32,7 +32,9 @@ normalization accepts up to 300 messages, 2,000 user / 12,000 assistant characte
 Inference uses only the current question (400 characters maximum) and bounded
 existing retrieval evidence, not chat history. Ollama URL is configurable with
 `--ollama-url` but must remain numeric HTTP loopback `/api/chat`; no redirects or
-proxies. CPU/4 threads, 4,096 context and 64 output-token defaults are retained.
+proxies. CPU/4 threads remain the default. The tiny profile uses 2,048 context
+and a 128-token output ceiling; `--profile standard` uses 4,096/192. Prompt
+budgets and visibly limited source fallbacks are documented in COMPACT_CONTEXT.md.
 
 `GET /health` reports availability. Original bounded `GET/HEAD /artifacts/` serves
 route PDFs/previews. Citation sources are plain locators here; the separate

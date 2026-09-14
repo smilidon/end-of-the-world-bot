@@ -63,6 +63,56 @@ The minimal HTTP adapter preserves its /trial wire format, original text validat
 scoped verified-route printing and artifact reader/server. It delegates to existing
 retrieval, local inference and named/multistate routing functions, not a new engine.
 Only backend/Pipe integration is qualified, not authenticated Open WebUI use.
-Private memory/recall, original history summarization, calculator dispatch,
+Private memory/recall, original history summarization, legacy calculator dispatch,
 illustrated Guide generation and legacy Map dispatch remain omitted. No complete
 application parity is claimed. See [compatible API and setup](CHAT.md).
+
+## Portable profiles and confined documents
+
+`install.sh → launch.sh → portable.py → flash_install.py` reuses the verified
+allowlist installer. Linux `lsblk` is discovery only; fresh-target validation and
+exact path confirmation precede writes. `bootstrap.py --from-source` delegates to
+that same source rather than silently installing an old release.
+
+Both profiles retain the GPL source and the rights-aware manual catalog/downloader.
+Bot retains retrieval, optional local inference and optional chat/routing modules;
+database mode exports the same FTS5 source excerpts to `reference.html`, using only
+inline static assets and deterministic browser search. No inference/server is
+needed to read the export. Empty or truncated content is visibly identified.
+
+`document_workspace.Workspace` is a separate restricted create/read/update/print
+interface rooted by the owner at installed `workspace/`, outside the reference
+library. The request cannot choose the root. The existing model has no tool loop;
+a trusted caller/user submits reviewed edits. Printable HTML escapes all document
+content. No new network or host-administration authority is introduced.
+See [boundaries and workflow](FLASH_INSTALL.md).
+
+`offline_diagnostics` is an opt-in Bot extension: pasted text → heuristic redaction
+→ deterministic token/error extraction → separate in-memory FTS5 guide references
+→ evidence/uncertainty/safe-check report. Raw logs never reach the main library or
+a persistent index. Only reviewed code defines suggestions; untrusted guide text
+is quoted evidence, never instructions. Optional reports use the confined workspace.
+
+### Managed intake, confirmed scans and compact inference
+
+Explicit `data/intake` + legacy safe guides → validated immutable generation → FTS5
++ HTML + hash/provenance → one atomic reference.html publication marker shared by
+CLI and browser. Old generations remain valid; failed rebuilds do not replace them.
+
+Linux diagnostic plan reads only fixed-allowlist metadata; explicit matching scope
+confirmation enables bounded, timestamp-filtered read-only tails. Redaction precedes
+analysis/reporting. No commands, elevation, configuration writes or network path.
+
+All deterministic handlers remain outside inference. Optional model envelopes
+whitelist only current question and a few small cited excerpts plus one short
+instruction. Tiny/standard budgets reject overload and return a labeled source
+fallback; tool catalogs/history/whole documents are not serialized.
+
+### Separate owner-consented network adapter
+
+`network_diagnostics` is an owner-only interactive CLI, not a model tool. Fixed
+Linux metadata plan → exact consent → bounded source reads → anonymous state/count
+observations. A second consent permits only fixed `iw dev NAME scan`, with byte/time
+bounds and no shell. It never joins or changes networks. Explicit report persistence
+uses the existing scoped workspace. No model, index or URL/update capability is
+added. See [network boundaries](NETWORK_DIAGNOSTICS.md).

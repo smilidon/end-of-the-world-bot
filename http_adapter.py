@@ -32,10 +32,10 @@ def normalized(msgs):
  return out
 
 class Application:
- def __init__(self,root,model,ollama_url):
+ def __init__(self,root,model,ollama_url,profile="tiny"):
   u=urlsplit(ollama_url)
   if u.scheme!='http' or u.hostname!='127.0.0.1' or u.path!='/api/chat' or u.username or u.password or u.query or u.fragment:raise ValueError('Local Ollama URL required')
-  self.root=Path(root).resolve();self.model=model;self.url=ollama_url;self.pending={}
+  self.root=Path(root).resolve();self.model=model;self.url=ollama_url;self.profile=profile;self.pending={}
  def run(self,body):
   start=time.monotonic()
   if not isinstance(body,dict):raise Rejection('messages_shape')
@@ -43,6 +43,12 @@ class Application:
   sources=[];tokens=0
   printed=print_routes.dispatch(q,s)
   if printed:answer=printed['direct']
+  elif q.lower().startswith('calc:'):
+   from compact_context import calculate
+   answer=str(calculate(q.split(':',1)[1].strip()))
+  elif q.lower().startswith(('read:','search:','reference:','files:')):
+   result=bot.retrieve(self.root,q);sources=result['sources']
+   answer='\n\n'.join('['+v['id']+'] '+v['text'] for v in sources) or result.get('message') or 'No matching excerpt.'
   elif q.lower().startswith('guide:') or re.search(r'\b(illustrated|leaflet)\b',q,re.I):
    answer='Illustrated Guide exports are not included in this source alpha. Use Read: with an exact document filename for source excerpts.'
   elif re.search(r'\b(map|directions|route|drive|driving|navigate)\b|^where is |how do i get',q,re.I) or s in self.pending:
@@ -69,7 +75,7 @@ class Application:
    def retrieve(_):
     return [{'id':v['id'],'title':v['source'],'file':v['source'],'location':v['source'],'date':'unverified','text':v['text']} for v in bot.retrieve(self.root,q)['sources']]
    model_query.retrieve=retrieve
-   result=model_query.query(SimpleNamespace(question=q,search=None,retrieve_only=False,num_gpu=0,threads=4,ollama_url=self.url))
+   result=model_query.query(SimpleNamespace(question=q,search=None,retrieve_only=False,num_gpu=0,threads=4,ollama_url=self.url,profile=self.profile))
    answer=result['answer'];tokens=result.get('input_tokens') or 0
    sources=[{'id':v['id'],'source':v['location'],'text':v['text']} for v in result['sources']]
   return {'answer':answer,'context':{'memory':[],'summary':[],'tool_results':sources},'prompt_tokens':tokens,'seconds':round(time.monotonic()-start,3)}
@@ -103,9 +109,9 @@ def make_server(app,port=8769):
  return server
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--root',type=Path,required=True);p.add_argument('--model',required=True);p.add_argument('--port',type=int,default=8769);p.add_argument('--artifacts',type=Path,default=Path('runtime/artifacts'));p.add_argument('--ollama-url',default='http://127.0.0.1:11434/api/chat');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--root',type=Path,required=True);p.add_argument('--model',required=True);p.add_argument('--profile',choices=['tiny','standard'],default='tiny');p.add_argument('--port',type=int,default=8769);p.add_argument('--artifacts',type=Path,default=Path('runtime/artifacts'));p.add_argument('--ollama-url',default='http://127.0.0.1:11434/api/chat');a=p.parse_args()
  if a.artifacts.is_symlink():raise ValueError('Artifact directory must not be a symlink')
  a.artifacts.mkdir(parents=True,exist_ok=True,mode=0o700)
  export.ART=artifact_config.ART=a.artifacts.resolve()
- with make_server(Application(a.root,a.model,a.ollama_url),a.port) as server:server.serve_forever()
+ with make_server(Application(a.root,a.model,a.ollama_url,a.profile),a.port) as server:server.serve_forever()
 if __name__=='__main__':main()
