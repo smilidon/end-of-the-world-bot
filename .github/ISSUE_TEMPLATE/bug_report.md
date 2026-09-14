@@ -8,7 +8,7 @@ assignees: ''
 
 ## Description
 
-Concise summary of the defect and where it appears (indexing, search, citation server, PDF ingestion, portable install, routing, privacy guard, etc.).
+Concise summary of the defect and where it appears (indexing, search, citation server, PDF ingestion, portable install, routing, privacy guard, etc.). I'm a single maintainer reviewing these personally; a clear, reproducible report saves us both time.
 
 ## Version and environment
 
@@ -40,4 +40,4 @@ If attaching logs or output: use synthetic fixtures or redacted excerpts only. D
 
 ## Search first
 
-Confirm this is not a duplicate by searching open and recently closed issues. If the same symptom appears with a different root cause, open a new issue and reference the related one.
+Confirm this is not a duplicate by searching open and recently closed issues. If the same symptom appears with a different root cause, open a new issue and reference the related one. Duplicates slow review; respectful scope keeps this project sustainable.

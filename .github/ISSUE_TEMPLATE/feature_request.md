@@ -8,7 +8,7 @@ assignees: ''
 
 ## Summary
 
-What the feature does and why it fits this offline reference project.
+What the feature does and why it fits this offline reference project. Please keep requests within the existing scope: bounded retrieval, citations, portable install, privacy, routing, synthetic fixtures. I am not adding hosted services, telemetry, or marketing copy.
 
 ## Scope and impact
 
@@ -31,4 +31,4 @@ If this introduces copied material, a new dependency, or a derived asset: source
 
 ## Search first
 
-Confirm this is not already requested or in progress. Reference related issues.
+Confirm this is not already requested or in progress. Reference related issues. A focused request within the existing offline/reference boundary is much more likely to be considered.

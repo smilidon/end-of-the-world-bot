@@ -1,6 +1,9 @@
 ## What does this PR change?
 
-One-line scope: docs/config, bug fix, feature, or refactor. Keep it single-purpose.
+One-line scope: docs/config, bug fix, feature, or refactor. Keep it
+single-purpose and respectful of the existing offline/reference boundary. I'm
+the only regular maintainer — a focused PR with passing checks is the
+quickest path to review.
 
 ## Related issue
 
@@ -20,7 +23,10 @@ Link or describe why this change is needed.
 
 ## Security and privacy
 
-Confirm no vulnerability disclosure is embedded in public PR text. Use `SECURITY.md` for private reporting.
+Confirm no vulnerability disclosure is embedded in public PR text. Use
+`SECURITY.md` for private reporting — open a minimal request (no exploit
+details, no secrets, no sensitive paths) if no verified private contact is
+available; wait for the maintainer to direct you.
 
 ## Source rights
 

@@ -62,3 +62,8 @@ tests/test_privacy.py
 tests/test_resource_cleanup.py
 tools/build_release.py
 tools/privacy_scan.py
+.github/ISSUE_TEMPLATE/bug_report.md
+.github/ISSUE_TEMPLATE/feature_request.md
+.github/pull_request_template.md
+CODEOWNERS
+CONTRIBUTING.md
