@@ -23,11 +23,38 @@ def build(root):
         raise ValueError('Index directory must not be a symlink')
     directory.mkdir(exist_ok=True)
     target = directory / 'guides.sqlite'
-    if target.exists():
-        raise ValueError('Index exists; move it aside explicitly before rebuilding')
+    # First-run USB defect fix: installer-created empty index may be replaced
+    # after guides added; any valid nonempty index or symlink is refused.
+    symlink_refused = target.is_symlink()
+    if symlink_refused:
+        raise ValueError('Index is a symlink; must not be followed or replaced')
     files = [f for f in library.catalog(root) if Path(f).suffix.lower() in {'.pdf','.html','.htm','.txt','.md','.mdx'}]
-    # Exclusive create: never replace a pre-existing index or follow a symlink.
-    fd = os.open(target, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    empty_index_replaced = False
+    if target.exists():
+        try:
+            with contextlib.closing(sqlite3.connect(str(target))) as probe:
+                has_table = probe.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='chunks'").fetchone() is not None
+                if has_table:
+                    count = probe.execute('SELECT COUNT(*) FROM chunks').fetchone()[0]
+                    if count > 0:
+                        raise ValueError('Index exists with data; move it aside explicitly before rebuilding')
+                    # Empty table: installer stub; replace only when guides present
+                    if len(files) == 0:
+                        raise ValueError('Index exists but is empty and no guides present')
+                else:
+                    # Not a valid SQLite FTS index (e.g. 0-byte installer stub).
+                    # Treat as empty index: replace only when guides present.
+                    if len(files) == 0:
+                        raise ValueError('Index exists but is empty and no guides present')
+        except sqlite3.Error:
+            raise ValueError('Index exists and is unreadable; preserve it by moving aside')
+        # Empty index + guides present: remove before exclusive create
+        target.unlink()
+        empty_index_replaced = True
+    elif len(files) == 0:
+        raise ValueError('No guides present for first-run index creation')
+    # Exclusive create: never follow symlink or replace pre-existing protected index.
+    fd = os.open(str(target), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
     os.close(fd)
     count = 0
     with contextlib.closing(sqlite3.connect(target)) as db, db:

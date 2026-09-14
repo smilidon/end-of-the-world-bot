@@ -64,8 +64,47 @@ def export(root, destination):
                     truncated = True
                     break
                 rows.append({'file': file, 'location': location, 'text': text})
+    # First-run browser-export defect: safe replacement / refusal rules.
+    dest_path = Path(destination)
+    # Refuse symlinks unconditionally (preserve them; never follow or replace).
+    if dest_path.is_symlink() or (dest_path.exists() and dest_path.is_symlink()):
+        raise ValueError('Destination is a symlink; refused to follow or replace')
+    # If destination already exists: allow replacement ONLY when it is a
+    # recognizable prior app-generated export with zero reference rows.
+    # Any non-empty, user, populated, or unknown file is refused and preserved.
+    if dest_path.exists() and not dest_path.is_symlink():
+        is_generated_empty = False
+        try:
+            content = dest_path.read_text(encoding='utf-8')
+            # Recognizable as our generated page (contains the embedded data script).
+            has_script_tag = '<script id="records" type="application/json">' in content
+            if has_script_tag:
+                # Check reference rows embedded in the JSON data block.
+                # Look for the JSON payload: count actual 'file'/'location'/'text'
+                # reference rows rather than using file size or byte length.
+                import re
+                # Extract the data payload inside the script tag.
+                m = re.search(
+                    r'<script id="records" type="application/json">(.*?)</script>',
+                    content, re.DOTALL)
+                if m:
+                    import html
+                    raw = html.unescape(m.group(1))
+                    try:
+                        payload = json.loads(raw)
+                        row_count = len(payload.get('rows', []))
+                        if row_count == 0:
+                            is_generated_empty = True
+                    except (ValueError, TypeError):
+                        pass
+        except (OSError, UnicodeDecodeError):
+            pass
+        if not is_generated_empty:
+            raise ValueError('Destination exists with non-empty or unknown content; refusal to overwrite user/populated export')
+    # If we reach here, either destination does not exist, or it is a
+    # recognized empty generated export that may be safely replaced.
     data = json.dumps({'rows': rows, 'truncated': truncated}, ensure_ascii=True).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
-    # New exports only: never overwrite a user's reference page or follow a link.
-    with Path(destination).open('x', encoding='utf-8') as stream:
+    # Write (replace permitted only for the verified-empty-generated case above).
+    with dest_path.open('w', encoding='utf-8') as stream:
         stream.write(PAGE.replace('__DATA__', data))
     return {'excerpts': len(rows), 'truncated': truncated, 'file': str(destination)}
