@@ -1,4 +1,29 @@
-# Source release verification — 2026-09-12
+# Source release verification
+
+## Licensing audit — 2026-09-13
+
+- All 42 existing synthetic tests passed on Linux with Python 3.14.7, including
+  deterministic ZIP packaging, synthetic installation, Pipe/resource cleanup,
+  retrieval/citations and manual-download transport fixtures. No real installation
+  or publisher download was exercised in this audit.
+- LICENSE matched the GNU-published GPLv3 text byte-for-byte. All 37 Python/Java/
+  shell files carry GPL-3.0-only SPDX headers; adding the Pipe's missing comment
+  leaves its parsed Python AST unchanged. All 21 staged provenance hashes match.
+- The source allowlist contains 64 files; the checksum manifest covers the other
+  63 files. Original source hashes and existing alpha.2 bootstrap pins remain
+  historical evidence, not new provenance or release verification.
+- Shared-worktree privacy scanning also traverses unrelated feature refs; use the
+  single-branch procedure in [PUBLISH.md](PUBLISH.md) to qualify this branch's
+  worktree, index and history without changing another branch or its allowlist.
+- No live inference, authenticated Open WebUI, native routing/rendering, additional
+  hardware platform or published-release qualification is claimed.
+
+## Historical initial-snapshot checks — 2026-09-12
+
+The record below describes the initial pre-publication snapshot, not current
+file/test counts or GitHub state. Subsequent merged changes are summarized in
+[CHANGELOG.md](../CHANGELOG.md); current license scope is in
+[LICENSE_AUDIT.md](LICENSE_AUDIT.md).
 
 - Linux: eight synthetic unit tests passed (six retained application tests and two
   privacy-guard regressions). Application coverage: offline indexing/search/direct
