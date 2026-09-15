@@ -19,6 +19,7 @@ bot.py
 citation_links.py
 compact_context.py
 corridor_routing.py
+create-usb.ps1
 diagnostic_guides/dependencies.md
 diagnostic_guides/local-inference.md
 diagnostic_guides/permissions.md
@@ -37,9 +38,11 @@ docs/MANUAL_CATALOG.md
 docs/NETWORK_DIAGNOSTICS.md
 docs/OFFLINE_DIAGNOSTICS.md
 docs/PUBLISH.md
+docs/PROJECT_STATUS.md
 docs/RECOVERY.md
 docs/ROUTING.md
 docs/VERIFICATION.md
+docs/WINDOWS_USB.md
 document_intake.py
 document_workspace.py
 download_manuals.py
@@ -82,6 +85,7 @@ tests/test_network_diagnostics.py
 tests/test_portable.py
 tests/test_privacy.py
 tests/test_resource_cleanup.py
+tests/test_windows_usb.py
 tools/build_release.py
 tools/privacy_scan.py
 tools/verify_clean_install.py
