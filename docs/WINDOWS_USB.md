@@ -92,8 +92,10 @@ when `pwsh` is on PATH (or `PWSH` names its executable). It covers exact package
 copying, explicit generated-HTML inclusion, preview/no writes, existing-file
 preservation, checksum/path/link refusals, and permission failures. Packaging
 membership/reproducibility tests run even without PowerShell; execution tests
-then report skips. These are Linux filesystem fixtures, **not native Windows
-PowerShell 5.1, Windows junction/drive, physical USB, or Windows browser acceptance**.
+then report skips. The same file runs in the `windows-static-reader` CI job on
+Windows Server 2025 NTFS; there the real Linux `reference.html` export is skipped
+(the runtime is Linux-only) and a prepared page exercises the copy path instead.
+Neither covers **Windows PowerShell 5.1, junctions, physical USB, or Windows browser acceptance**.
 
 ```sh
 PWSH=/path/to/pwsh python3 -m unittest discover -s tests -p 'test_windows_usb.py' -v
