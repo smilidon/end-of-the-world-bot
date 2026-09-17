@@ -70,7 +70,7 @@ class Portable(unittest.TestCase):
         user_dir = self.base / 'synthetic user'
         user_dir.mkdir()
         env = dict(os.environ, HOME=str(user_dir), PYTHON=sys.executable)
-        self.run_script(script='install.sh', env=env)
+        self.run_script('--local', script='install.sh', env=env)
         destination = user_dir / '.local/share/end-of-world-bot' / (ROOT / 'VERSION').read_text().strip()
         self.assertTrue((destination / 'launch.sh').is_file())
         self.fixture(destination)
@@ -155,17 +155,6 @@ class Portable(unittest.TestCase):
             expected = set((ROOT / 'RELEASE_FILES.txt').read_text().splitlines())
             self.assertEqual({name.split('/', 1)[1] for name in bundle.namelist()}, expected)
             self.assertTrue(all((info.external_attr >> 16) == 0o100644 for info in bundle.infolist()))
-
-    def test_release_verification_inventory_counts(self):
-        allowlist = set((ROOT / 'RELEASE_FILES.txt').read_text().splitlines())
-        manifest = {
-            line.split('  ', 1)[1]
-            for line in (ROOT / 'FILE_MANIFEST.sha256').read_text().splitlines()
-        }
-        verification = ' '.join((ROOT / 'docs/VERIFICATION.md').read_text().split())
-        self.assertEqual(manifest, allowlist - {'FILE_MANIFEST.sha256'})
-        self.assertIn(f'The source allowlist contains {len(allowlist)} files;', verification)
-        self.assertIn(f'the checksum manifest covers the other {len(manifest)} files.', verification)
 
     def test_runtime_diagnostics(self):
         with patch.object(sys, 'version_info', (3, 10)), self.assertRaisesRegex(ValueError, 'Python 3.11'):

@@ -19,6 +19,12 @@ documents.json
 *.so
 *.dylib
 .env*
+workspace/
+models/
+portable-install.json
+reference*.html
+diagnostics/
+data/
 
 # graft's local graph cache — regenerable, not committed (run `graft build`).
 /graft/

@@ -1,0 +1,3 @@
+# Optional only. The offline core, connectivity check and downloader do not need ddgs.
+# Use the DuckDuckGo backend explicitly; this is not an official DuckDuckGo API.
+ddgs>=9,<10

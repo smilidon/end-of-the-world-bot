@@ -39,3 +39,35 @@ otherwise report only non-sensitive reproduction details.
 
 No claim is made that the system is safe for personalized medical decisions,
 emergency treatment or navigation. Consult primary sources and qualified help.
+
+The portable document interface is intentionally narrower than a coding agent:
+only plain `.txt`/`.md` documents under its owner-fixed `workspace/` root, bounded
+content, no-follow descriptor-relative opens, no multi-link/nonregular files,
+exclusive create/print and hash-checked atomic updates. No delete, shell, config,
+host-path or network tool exists in that interface. The existing inference endpoint remains
+answer-only. Browser snapshots escape source text, contain no external assets and
+have no network access under their CSP. They are private copies of indexed content;
+protect the flash drive and retain original content licenses. See
+[flash installation boundaries](docs/FLASH_INSTALL.md).
+
+The pasted-text diagnostic interface accepts explicitly supplied text. Likely credentials are
+redacted before guide persistence, indexing and report output; redaction is not a
+privacy guarantee. Raw logs are not stored or indexed. Diagnostic guide files are
+a distinct bounded collection, never a system-log/file-browser capability. All
+suggestions come from fixed application rules, not log/guide instructions.
+
+Managed reindexing reads only flat `data/intake` and supported `library/guides`
+files, with no path override, links, devices or executable/config content. PDF
+extraction uses fixed Poppler arguments and bounds, never a user-selected command.
+One atomic publication commits CLI/browser state; prior sources/indexes survive
+failed rebuilds. Diagnostic scan is a DIFFERENT boundary: it never executes even
+an extractor, reads only confirmed fixed Linux log ranges, refuses root and writes
+no raw logs. Explicit report saving alone writes the confined workspace. Compact
+model envelopes contain no tool catalog/history and cannot authorize any action.
+
+The separate owner-invoked `network-diagnose` CLI is not exposed to inference.
+Its default local reads execute no commands or network requests. Optional Wi-Fi
+scanning is a narrow second-consent exception: fixed `iw` argv, byte/time bounds,
+no shell/elevation/credentials/joining/config changes. Reports omit raw identities
+and apply secret redaction; no data is indexed or sent to a model. See
+[exact scope and limits](docs/NETWORK_DIAGNOSTICS.md).

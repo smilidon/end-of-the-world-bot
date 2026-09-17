@@ -1,58 +1,123 @@
-# Source release verification
+# Source verification and integration status
 
-## Licensing audit — 2026-09-13
+## Current source inventory
 
-- All 42 existing synthetic tests passed on Linux with Python 3.14.7, including
-  deterministic ZIP packaging, synthetic installation, Pipe/resource cleanup,
-  retrieval/citations and manual-download transport fixtures. No real installation
-  or publisher download was exercised in this audit.
-- LICENSE matched the GNU-published GPLv3 text byte-for-byte. All 37 Python/Java/
-  shell files carry GPL-3.0-only SPDX headers; adding the Pipe's missing comment
-  leaves its parsed Python AST unchanged. All 21 staged provenance hashes match.
-- The source allowlist contains 155 files; the checksum manifest covers the other
-  154 files. Original source hashes and existing alpha.2 bootstrap pins remain
-  historical evidence, not new provenance or release verification.
-- Shared-worktree privacy scanning also traverses unrelated feature refs; use the
-  single-branch procedure in [PUBLISH.md](PUBLISH.md) to qualify this branch's
-  worktree, index and history without changing another branch or its allowlist.
-- No live inference, authenticated Open WebUI, native routing/rendering, additional
-  hardware platform or published-release qualification is claimed.
+The source allowlist contains 195 files; the checksum manifest covers the other
+194 files. `tests/test_source_inventory.py` checks those counts, exact Git-index
+membership and inclusion of both first-run USB regression files. No inventory
+test or privacy rule was relaxed to accept an unlisted file.
 
-## Historical initial-snapshot checks — 2026-09-12
+## Stage 3: retrieval, network permission and update checking
 
-The record below describes the initial pre-publication snapshot, not current
-file/test counts or GitHub state. Subsequent merged changes are summarized in
-[CHANGELOG.md](../CHANGELOG.md); current license scope is in
-[LICENSE_AUDIT.md](LICENSE_AUDIT.md).
+[Retrieval](RETRIEVAL.md) expands the existing lexical aliases in FTS queries
+without rewriting quoted evidence or requiring an index migration. Indexed
+candidates are checked against Stage 2 source hashes or generation provenance.
+Changed or missing candidates do not erase healthy results. Legacy indexes can
+use bounded current-file reads instead of unchecked stale chunks. PDF fallback
+keeps page references; missing/corrupt indexes and no matches have distinct
+status information. Explicit document commands take priority over routing;
+incidental words such as "drive" do not select a geographic tool, and unrelated
+questions clear pending route state.
 
-- Linux: eight synthetic unit tests passed (six retained application tests and two
-  privacy-guard regressions). Application coverage: offline indexing/search/direct
-  reading, no-result handling, protected paths/symlinks, lexical ranking/HTML cleaning,
-  street parsing and fallback, engine geometry/projection, PDF ingestion/page citations
-  and route printing. Privacy regressions check sensitive patterns, source allowlisting
-  and detection of sensitive content deleted from the current tree but retained in Git.
-- Retrieval/PDF tests prohibit socket connections. Tests use temporary synthetic
-  fixtures, not the original documents, maps, model or live adapter.
-- Python compilation passed. All 16 staged SOURCE_MANIFEST hashes match. Fourteen
-  copied original module hashes were independently rechecked and match; the two
-  extracted helper entries retain previously recorded original ask.py provenance,
-  not independently revalidated in this audit.
-- The privacy guard checks worktree files, staged blobs and all reachable committed
-  trees against RELEASE_FILES.txt and heuristic sensitive-content patterns. Review
-  commit metadata separately for public identity suitability. Heuristics do not prove
-  absence of every private address, identifier or secret. No original runtime/test
-  data or history was imported. The candidate has no commits or remote.
-- Fresh local synthetic Git clone validation: all eight tests, privacy scan and
-  manifest verification, plus the README index/search/direct-read quickstart. The
-  temporary snapshot uses synthetic commit identity; no candidate commit is implied.
-- FILE_MANIFEST.sha256 covers the 40 other allowlisted source/docs/config files,
-  excluding itself, .git and generated caches. No downloaded datasets or binaries.
-- Validation dependencies are the existing installed ReportLab 5.0.0, Pillow 12.3.0
-  and system pdftotext. Fresh network dependency installation was not tested.
-- No actual model inference, ZIM extraction, real-map routing, native rendering,
-  authenticated chat acceptance, Windows/macOS run or hosted CI run is claimed.
-  Chat integration requires separate setup; not verified in clean release. See
-  ARCHITECTURE.md for the original adapter, Guide: and legacy Map: omissions.
+[Online operations](ONLINE.md) ask for interactive per-operation network approval,
+default No, before public connection checks, DuckDuckGo searches, document
+fetches, catalog downloads and current-bootstrap release requests. Decline, EOF,
+Ctrl-C and non-interactive invocation do not grant approval. Offline cache reads
+neither prompt nor connect. Localhost-only model calls remain separate.
 
-This qualifies a limited source snapshot, not the complete original chat appliance.
-Publication remains a separate publisher-owned action.
+The standard-library update checker obtains approval before requesting this
+project's published GitHub release metadata. Numeric versions and release
+channels are compared, dated cached results remain useful offline, and missing
+information is reported as unknown. It does not download or install updates,
+poll in the background, or identify unversioned branch changes. Use
+`sh launch.sh updates` or `python3 update_checker.py`; `--offline` reads saved
+metadata only. The published alpha.2 assets have not been replaced by this work.
+
+The new regression suites are `tests/test_stage3_retrieval.py`,
+`tests/test_stage3_dispatch.py` and `tests/test_stage3_network.py`.
+
+## Concurrent main-branch integration
+
+Main at `7d6d79e933f69346780fb88bb15da4a833f4f2fe` added Archify/Graft workflows and
+agent-tool files while Stage 3 was being verified. Their bytes and licenses are
+preserved here; both branches' ignore rules are combined. The release inventory
+is the union of the existing feature files and those main additions. No owner
+files were removed merely to make the inventory check pass.
+
+These additions are development tooling, not bot runtime requirements. No agent
+hook, maintenance workflow, release task or vendored tool was executed during
+this reconciliation. Their independent network behavior is outside the bot
+command permission mechanism and is not qualified by the Python tests. In
+particular, the existing GitHub-hosted scheduled workflow is not a local bot
+background update checker. Vendored development-tool license notices remain
+with their files; this does not qualify a new bundled runtime distribution.
+
+## Stage 2 and portable foundation retained
+
+`index_builder.py` stages and validates an index before publication, preserving
+zero-byte/recognized-empty stubs on failure and refusing populated or unrelated
+SQLite databases. Actual file reads, discovery, input, output and subprocess
+execution are bounded. Failed, timed-out, truncated or empty PDF extraction is
+not successful indexing. Source hashes, sizes, mtimes and indexing times are
+recorded and source bytes are rechecked before publication.
+
+The immutable-generation reindex workflow shares the extraction helper,
+preflights staging space, flushes files/directories and removes failed
+publication temporaries. Post-commit flush warnings are distinct from failed
+publication. Old and failed generations remain for deliberate owner cleanup;
+back up the active publication and its generation before reclaiming space.
+Power-loss guarantees require filesystem and hardware qualification.
+
+Optional online preparation retains dated search caches, bounded selected-file
+downloads, no-overwrite publication and hash-bound download receipts. Search
+snippets are not automatically downloaded or promoted to indexed evidence.
+Bot/database installation, workspace documents, compact model contexts and
+confirmed log/network observations remain separate tested components.
+
+## Verification gates and receipts
+
+Run each candidate from an isolated checkout:
+
+```sh
+python -m unittest discover -s tests -v
+python tools/verify_clean_install.py --source .
+python tools/privacy_scan.py
+sha256sum -c FILE_MANIFEST.sha256
+python tools/build_release.py --output "$(mktemp -d)"
+```
+
+The strict privacy scanner checks the worktree, staged blobs and reachable
+committed trees. A shallow CI checkout is not a full-history audit; unrelated
+local refs also participate in a full-history scan. A passing heuristic scan is
+not a guarantee that every private identifier is absent. The release builder
+creates a validation artifact and does not publish a release.
+
+Exact current commit SHAs and CI outcomes belong in PR #4 and GitHub Actions.
+Do not treat historical records below as verification of a newer candidate:
+
+- Stage 1 integrated contributor PR #6 and repaired missing USB regression-file
+  inventory entries. Main's licensing and contributor documentation are retained.
+- Stage 2 head `92cb3e9` passed 141 tests, clean-install verification, privacy,
+  101 checksums and release building in Actions run `35177499912`.
+- Initial Stage 3 head `4902344` ran 198 tests: 197 passed and one documentation
+  count check failed because this page still reported 102/101 instead of 109/108.
+- Repair `b8f0fa9` passed that count check. Its merge test against main `360d94d`
+  again ran 198 tests, with the only failure identifying newly added Archify/Graft
+  workflow files missing from the feature inventory. Later CI gates were skipped,
+  not passed. This reconciliation also retains subsequent main agent additions.
+
+## Qualification boundaries
+
+Tests use synthetic providers, release listings, documents, network-call traps
+and isolated temporary installation paths. The clean-install journey exercises
+Bot/database modes, failed-rebuild preservation, moved-folder reading and
+unchanged-data sentinels. Local sparse-harness checks are not a full clone test.
+
+No live DuckDuckGo, publisher download or GitHub-checker compatibility is
+established by fixture tests. Real Ollama, authenticated Open WebUI, native maps,
+physical USB/FAT/exFAT power loss, native Windows, Raspberry Pi and phone inference
+remain outside this stage's qualification. PowerShell tests on Linux do not
+qualify Windows removable-drive behavior. CI dependency installation is separate
+from offline bot use. See [online boundaries](ONLINE.md),
+[retrieval limits](RETRIEVAL.md), [offline diagnostics](OFFLINE_DIAGNOSTICS.md),
+[network observations](NETWORK_DIAGNOSTICS.md) and [the license audit](LICENSE_AUDIT.md).

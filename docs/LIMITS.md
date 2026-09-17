@@ -9,7 +9,8 @@
 - Index/search extraction is bounded and can silently truncate long files.
   Scanned PDFs have no OCR pipeline. A stale index can disagree with changed files.
 - Source IDs identify excerpts; model-generated citations/answers are not fact
-  verification. The optional 4K/64-output-token model configuration is short-form.
+  verification. Optional tiny (2K/128-output-token ceiling) and standard (4K/192) profiles
+  remain short-form, with preflight prompt budgets and source-only overload fallback.
   Its HTTP timeout is not a guaranteed process-wide inference cancellation.
 - Citation server is explicitly allowlisted, loopback-only and unauthenticated.
   Do not proxy it onto a LAN or internet. Browser rendering and WebUI integration

@@ -12,4 +12,9 @@ if ! "$python" -I -B -c 'import sys; sys.exit(sys.version_info < (3, 11))'; then
     echo "Python 3.11+ is required. Select an installed interpreter with PYTHON; see START_HERE.md." >&2
     exit 1
 fi
+# Update checks are explicit and do not require a prepared document library.
+if [ "${1:-}" = updates ]; then
+    shift
+    exec "$python" -I -B "$directory/update_checker.py" "$@"
+fi
 exec "$python" -I -B "$directory/portable.py" "$@"
