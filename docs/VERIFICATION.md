@@ -2,8 +2,8 @@
 
 ## Current source inventory
 
-The source allowlist contains 96 files; the checksum manifest covers the other
-95 files. `tests/test_source_inventory.py` checks those counts, exact Git-index
+The source allowlist contains 101 files; the checksum manifest covers the other
+100 files. `tests/test_source_inventory.py` checks those counts, exact Git-index
 membership and inclusion of both first-run USB regression files. The inventory
 count regression introduced by PR #6 now lives in that dedicated test module;
 the portable installer behavior tests remain unchanged.
@@ -88,3 +88,12 @@ rendering, physical FAT/exFAT USB/power-loss, native Windows runtime, Raspberry 
 or phone-inference qualification is claimed here. PowerShell on Linux does not
 qualify Windows removable-drive behavior. No real user installations, services, models or documents were modified. CI
 test-environment dependency installation is separate from offline runtime use.
+
+## Windows CI workspace regression
+
+The PowerShell repository installer is downloaded into a fresh directory beneath
+RUNNER_TEMP, not the checkout, and removed on success or failure. Two shell-fixture
+regressions execute the actual workflow block with fake wget/sudo/pwsh tools; they
+assert that the checkout sentinel is unchanged and staging is cleaned. These tests
+perform no downloads, privileged operations, or PowerShell installation. The
+separate copier suite executes real PowerShell on Ubuntu CI, not native Windows.

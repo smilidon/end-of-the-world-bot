@@ -1,5 +1,9 @@
 # Install from a clone/download onto a flash drive
 
+For Windows **folder copying only**, see the [PowerShell USB copy guide](WINDOWS_USB.md).
+It does not make bootable media or provide a native Windows Bot runtime. The Linux
+preparation workflow below is separate; Windows can read a prepared static HTML export.
+
 This flow uses the **source you downloaded**, not the old pinned alpha.2 release.
 Linux, POSIX sh, Python 3.11+ and SQLite FTS5 are required to install/prepare either
 mode. It is not a bootable OS and does not bundle Python, Ollama, models or manuals.
