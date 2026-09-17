@@ -13,12 +13,12 @@ RULES = {
     'email': r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}',
     'url_credentials': r'https?://[^\s/]+:[^\s/]+@',
 }
-IGNORED = {'.git', '.venv', '__pycache__', '.pytest_cache'}
+IGNORED = {'.git', '.venv', '__pycache__'}
 
 
-def inspect(name, body, allowed, check_allowlist=True):
+def inspect(name, body, allowed):
     findings = []
-    if check_allowlist and name not in allowed:
+    if name not in allowed:
         findings.append((name, 'not in source allowlist'))
     try:
         text = body.decode('utf-8')
@@ -46,7 +46,7 @@ def main():
             findings.append((str(relative), 'symlink'))
         elif path.is_file():
             files += 1
-            findings.extend(inspect(relative.as_posix(), path.read_bytes(), allowed, check_allowlist=True))
+            findings.extend(inspect(relative.as_posix(), path.read_bytes(), allowed))
     for name in sorted(allowed):
         if not (ROOT / name).is_file():
             findings.append((name, 'missing allowlisted file'))
@@ -61,7 +61,7 @@ def main():
             decoded = name.decode()
             if mode == b'120000' or stage != b'0':
                 findings.append((decoded, 'index symlink or conflict'))
-            findings.extend(inspect(decoded, git('cat-file', 'blob', oid.decode()), allowed, check_allowlist=True))
+            findings.extend(inspect(decoded, git('cat-file', 'blob', oid.decode()), allowed))
         revisions = git('rev-list', '--all').decode().splitlines()
         commits = len(revisions)
         seen = set()
@@ -75,8 +75,7 @@ def main():
                     findings.append((name.decode(), 'history non-source entry'))
                 elif (oid, name) not in seen:
                     seen.add((oid, name))
-                    # History files: only check for secrets/patterns, not allowlist membership
-                    findings.extend(inspect(name.decode(), git('cat-file', 'blob', oid.decode()), allowed, check_allowlist=False))
+                    findings.extend(inspect(name.decode(), git('cat-file', 'blob', oid.decode()), allowed))
     findings = sorted(set(findings))
     for name, label in findings:
         print(name + ': ' + label)
