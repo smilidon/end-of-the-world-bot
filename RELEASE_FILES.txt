@@ -1,6 +1,12 @@
+.github/ISSUE_TEMPLATE/bug_report.md
+.github/ISSUE_TEMPLATE/feature_request.md
+.github/pull_request_template.md
 .github/workflows/tests.yml
 .gitignore
 AddressProbe.java
+CHANGELOG.md
+CODEOWNERS
+CONTRIBUTING.md
 CorridorProbe.java
 FILE_MANIFEST.sha256
 INSTALL_AND_DOWNLOAD.md
@@ -82,6 +88,9 @@ tests/test_network_diagnostics.py
 tests/test_portable.py
 tests/test_privacy.py
 tests/test_resource_cleanup.py
+tests/test_source_inventory.py
+tests/test_usb_browser_defect.py
+tests/test_usb_defect.py
 tools/build_release.py
 tools/privacy_scan.py
 tools/verify_clean_install.py
