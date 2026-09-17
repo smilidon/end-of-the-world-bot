@@ -156,6 +156,17 @@ class Portable(unittest.TestCase):
             self.assertEqual({name.split('/', 1)[1] for name in bundle.namelist()}, expected)
             self.assertTrue(all((info.external_attr >> 16) == 0o100644 for info in bundle.infolist()))
 
+    def test_release_verification_inventory_counts(self):
+        allowlist = set((ROOT / 'RELEASE_FILES.txt').read_text().splitlines())
+        manifest = {
+            line.split('  ', 1)[1]
+            for line in (ROOT / 'FILE_MANIFEST.sha256').read_text().splitlines()
+        }
+        verification = ' '.join((ROOT / 'docs/VERIFICATION.md').read_text().split())
+        self.assertEqual(manifest, allowlist - {'FILE_MANIFEST.sha256'})
+        self.assertIn(f'The source allowlist contains {len(allowlist)} files;', verification)
+        self.assertIn(f'the checksum manifest covers the other {len(manifest)} files.', verification)
+
     def test_runtime_diagnostics(self):
         with patch.object(sys, 'version_info', (3, 10)), self.assertRaisesRegex(ValueError, 'Python 3.11'):
             portable.check_runtime()

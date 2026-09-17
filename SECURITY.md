@@ -1,5 +1,19 @@
 # Security
 
+Private vulnerability reports: this repository does not have a verified
+private channel (the GitHub vulnerability-reporting feature returned 404 when
+last checked). Do not post exploit details, secrets, or private reproduction
+data in public issues or pull requests.
+
+If you have a security concern and there is no verified private contact
+available: open a minimal request stating only that a security contact is
+needed — no exploit description, no sensitive paths, no private document
+content, no secret or identifier — and wait for the maintainer to direct you.
+Once directed, share only what is required to confirm or reproduce the issue.
+I am the only regular maintainer; I will respond when I can, with no promised
+schedule. There is no dedicated security email, hotline, or 24-hour response;
+this is a personal offline reference project, not a commercial service.
+
 Operate against a dedicated, trusted local document directory. Never point the
 indexer at a home directory, account export or workspace. Filename filtering is
 defense in depth, not a classifier for private content. Source text is untrusted
