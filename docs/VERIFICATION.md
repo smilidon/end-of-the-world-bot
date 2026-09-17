@@ -2,8 +2,8 @@
 
 ## Current source inventory
 
-The source allowlist contains 200 files; the checksum manifest covers the other
-199 files. `tests/test_source_inventory.py` checks the exact Git-index,
+The source allowlist contains 201 files; the checksum manifest covers the other
+200 files. `tests/test_source_inventory.py` checks the exact Git-index,
 release-allowlist and checksum-manifest membership, including the Windows USB regression files.
 No inventory test or privacy rule was relaxed to accept an unlisted file.
 
