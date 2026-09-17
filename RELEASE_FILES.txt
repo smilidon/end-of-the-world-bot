@@ -45,6 +45,7 @@ docs/OFFLINE_DIAGNOSTICS.md
 docs/ONLINE.md
 docs/PUBLISH.md
 docs/RECOVERY.md
+docs/RETRIEVAL.md
 docs/ROUTING.md
 docs/VERIFICATION.md
 document_intake.py
@@ -70,6 +71,7 @@ model_query.py
 multistate_routing.py
 named_routing.py
 network_diagnostics.py
+network_permission.py
 offline_diagnostics.py
 online_library.py
 openwebui_pipe.py
@@ -79,6 +81,7 @@ reference_helpers.py
 requirements-online.txt
 requirements-optional.txt
 requirements-test.txt
+retrieval_support.py
 route_adapter.py
 tests/test_chat.py
 tests/test_compact_context.py
@@ -95,8 +98,12 @@ tests/test_privacy.py
 tests/test_resource_cleanup.py
 tests/test_source_inventory.py
 tests/test_stage2.py
+tests/test_stage3_dispatch.py
+tests/test_stage3_network.py
+tests/test_stage3_retrieval.py
 tests/test_usb_browser_defect.py
 tests/test_usb_defect.py
 tools/build_release.py
 tools/privacy_scan.py
 tools/verify_clean_install.py
+update_checker.py

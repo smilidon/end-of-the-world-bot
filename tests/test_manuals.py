@@ -78,7 +78,7 @@ class Manuals(unittest.TestCase):
             self.assertFalse(list(self.root.iterdir()))
     def test_short_oversize_wrong_hash(self):
         for body in [PDF[:-2],PDF+b'x',PDF.replace(b'Synthetic',b'Altered!!')]:
-            self.server.routes['/manual.pdf']=(200,{'Content-Type':'application/pdf'},body)
+            self.server.routes['/manual.pdf']=(200,{'Content-Type': 'application/pdf'},body)
             with self.assertRaises(ValueError):dm.fetch_one(self.fd,self.item,self.pub)
             self.assertFalse(list(self.root.iterdir()))
     def test_content_length_rejected_before_write(self):
@@ -144,7 +144,8 @@ class Manuals(unittest.TestCase):
         with patch.object(self.pub.opener,'open',side_effect=TimeoutError), self.assertRaises(TimeoutError):
             self.pub.request('https://publisher.test/manual.pdf')
         self.assertIn(1,self.waits);self.assertIn(2,self.waits)
-    def test_incomplete_transfer_report_and_repeat(self):
+    @patch('network_permission.ask', return_value=True)
+    def test_incomplete_transfer_report_and_repeat(self, permission):
         import http.client
         catalog=self.root/'catalog.json'
         catalog.write_text(json.dumps({'schema':1,'items':[self.item]}))

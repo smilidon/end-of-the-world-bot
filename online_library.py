@@ -46,6 +46,9 @@ def url(value):
 def worker(request):
     """Only this function performs network requests; inputs come from the CLI."""
     operation = request['operation']
+    if operation == 'updates':
+        from update_checker import fetch_releases
+        return fetch_releases()
     if operation == 'check':
         opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
         try:
@@ -111,8 +114,13 @@ def worker(request):
 
 
 def isolated(request):
-    seconds = {'check': 8, 'search': 30, 'download': 120}[request['operation']]
-    cap = 24 * 1024 * 1024 if request['operation'] == 'download' else CACHE_CAP
+    from network_permission import ask, describe, declined
+    description = describe(request)
+    if not ask(description):
+        return declined()
+    request = {**request, 'network_approved': True}
+    seconds = {'check': 8, 'search': 30, 'download': 120, 'updates': 20}[request['operation']]
+    cap = 24 * 1024 * 1024 if request['operation'] == 'download' else 512 * 1024 if request['operation'] == 'updates' else CACHE_CAP
     result = run_result([sys.executable, '-I', '-B', str(Path(__file__).resolve()),
                          '_worker', json.dumps(request)], seconds, cap)
     if not result.ok:
@@ -257,6 +265,9 @@ def main(argv=None):
     parser.add_argument('--app', type=Path, default=ROOT, help='Existing source/installation directory')
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('check', help='Check an existing Internet connection; never join or configure a network')
+    p = sub.add_parser('updates', help='Ask permission and check program releases; never install')
+    p.add_argument('--offline', action='store_true')
+    p.add_argument('--channel', choices=['auto', 'stable', 'prerelease'], default='auto')
     p = sub.add_parser('search', help='Try DuckDuckGo; use cached results when unavailable')
     p.add_argument('query')
     p.add_argument('--offline', action='store_true', help='Cache only; no network attempt')
@@ -268,12 +279,17 @@ def main(argv=None):
     try:
         if args.command == 'check':
             result = isolated({'operation': 'check'})
+        elif args.command == 'updates':
+            from update_checker import check
+            result = check(args.app, args.offline, args.channel)
         elif args.command == 'search':
             result = search(args.app, args.query, args.offline)
         else:
             result = download(args.app, args.url, args.name, args.reindex)
         print(json.dumps(result, indent=2, ensure_ascii=False))
-        return 1 if result['status'] == 'unavailable' or (args.command == 'download' and args.reindex and not result.get('published')) else 0
+        if result['status'] == 'declined':
+            return 0
+        return 1 if result['status'] in {'unavailable', 'offline'} or (args.command == 'download' and args.reindex and not result.get('published')) else 0
     except (OSError, ValueError, KeyError, TypeError, LookupError) as exc:
         print(json.dumps({'status': 'error', 'reason': str(exc)}), file=sys.stderr)
         return 1
@@ -282,7 +298,12 @@ def main(argv=None):
 if __name__ == '__main__':
     if len(sys.argv) == 3 and sys.argv[1] == '_worker':
         try:
-            output = worker(json.loads(sys.argv[2]))
+            request = json.loads(sys.argv[2])
+            if not isinstance(request, dict) or request.get('network_approved') is not True:
+                from network_permission import declined
+                output = declined()
+            else:
+                output = worker(request)
         except Exception as exc:
             output = {'status': 'unavailable', 'reason': type(exc).__name__ + ': network/provider unavailable; local library unchanged'}
         print(json.dumps(output))

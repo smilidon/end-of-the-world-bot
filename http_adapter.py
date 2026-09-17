@@ -6,6 +6,7 @@ from types import SimpleNamespace
 from http.server import BaseHTTPRequestHandler,HTTPServer
 from urllib.parse import urlsplit
 import bot,model_query,named_routing,multistate_routing,route_adapter
+from retrieval_support import route_intent,route_reply
 from local_visuals import artifact_config,export,print_routes
 class Rejection(ValueError):
  def __init__(self,code):self.code=code;super().__init__(code)
@@ -40,18 +41,24 @@ class Application:
   start=time.monotonic()
   if not isinstance(body,dict):raise Rejection('messages_shape')
   history=normalized(body.get('messages'));q=history[-1]['content'];s=print_routes.scope(body)
-  sources=[];tokens=0
+  sources=[];tokens=0;retrieval_status=None
+  previous=self.pending.get(s)
+  if previous and time.time()-previous['time']>86400:
+   self.pending.pop(s,None);previous=None
+  routing=route_intent(q) or route_reply(q,previous['request'] if previous else None,self.root/'navigation')
+  if not routing:self.pending.pop(s,None)
   printed=print_routes.dispatch(q,s)
   if printed:answer=printed['direct']
   elif q.lower().startswith('calc:'):
    from compact_context import calculate
    answer=str(calculate(q.split(':',1)[1].strip()))
   elif q.lower().startswith(('read:','search:','reference:','files:')):
-   result=bot.retrieve(self.root,q);sources=result['sources']
+   result=bot.retrieve(self.root,q);sources=result['sources'];retrieval_status=result.get('status')
    answer='\n\n'.join('['+v['id']+'] '+v['text'] for v in sources) or result.get('message') or 'No matching excerpt.'
+   if sources and result.get('message'):answer+='\n\nLibrary notice: '+result['message']
   elif q.lower().startswith('guide:') or re.search(r'\b(illustrated|leaflet)\b',q,re.I):
    answer='Illustrated Guide exports are not included in this source alpha. Use Read: with an exact document filename for source excerpts.'
-  elif re.search(r'\b(map|directions|route|drive|driving|navigate)\b|^where is |how do i get',q,re.I) or s in self.pending:
+  elif routing:
    print_routes.clear(s)
    previous=self.pending.pop(s,None)
    if previous and time.time()-previous['time']>86400:previous=None
@@ -70,15 +77,21 @@ class Application:
    except (OSError,ValueError,KeyError,RuntimeError):answer='The local map or routing runtime is unavailable; no route was calculated.'
   else:
    if len(q)>400:raise Rejection('text_bound')
-   model_query.HERE=bot.library.safe(self.root,'local-qa/guides.sqlite').parent
-   model_query.MODEL=self.model
-   def retrieve(_):
-    return [{'id':v['id'],'title':v['source'],'file':v['source'],'location':v['source'],'date':'unverified','text':v['text']} for v in bot.retrieve(self.root,q)['sources']]
-   model_query.retrieve=retrieve
-   result=model_query.query(SimpleNamespace(question=q,search=None,retrieve_only=False,num_gpu=0,threads=4,ollama_url=self.url,profile=self.profile))
-   answer=result['answer'];tokens=result.get('input_tokens') or 0
-   sources=[{'id':v['id'],'source':v['location'],'text':v['text']} for v in result['sources']]
-  return {'answer':answer,'context':{'memory':[],'summary':[],'tool_results':sources},'prompt_tokens':tokens,'seconds':round(time.monotonic()-start,3)}
+   found=bot.retrieve(self.root,q);sources=found['sources'];retrieval_status=found.get('status')
+   if not sources or (retrieval_status or {}).get('index_status') in {'missing','unreadable','legacy_unverified'}:
+    answer='\n\n'.join('['+v['id']+'] '+v['text'] for v in sources)
+    answer+=(('\n\n' if answer else '')+(found.get('message') or 'No matching excerpt.'))
+   else:
+    model_query.HERE=bot.library.safe(self.root,'local-qa/guides.sqlite').parent
+    model_query.MODEL=self.model
+    def retrieve(_):
+     return [{'id':v['id'],'title':v['source'],'file':v['source'],'location':v['source'],'date':'unverified','text':v['text']} for v in sources]
+    model_query.retrieve=retrieve
+    result=model_query.query(SimpleNamespace(question=q,search=None,retrieve_only=False,num_gpu=0,threads=4,ollama_url=self.url,profile=self.profile))
+    answer=result['answer'];tokens=result.get('input_tokens') or 0
+    sources=[{'id':v['id'],'source':v['location'],'text':v['text']} for v in result['sources']]
+    if found.get('message'):answer+='\n\nLibrary notice: '+found['message']
+  return {'answer':answer,'context':{'memory':[],'summary':[],'tool_results':sources},'retrieval_status':retrieval_status,'prompt_tokens':tokens,'seconds':round(time.monotonic()-start,3)}
 
 def make_server(app,port=8769):
  class Handler(BaseHTTPRequestHandler):

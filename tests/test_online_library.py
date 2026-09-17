@@ -74,7 +74,8 @@ class OnlineLibrary(unittest.TestCase):
         self.assertEqual(calls[1]['backend'], 'duckduckgo')
         self.assertEqual(calls[1]['max_results'], 5)
 
-    def test_worker_deadline_reports_unavailable(self):
+    @patch('network_permission.ask', return_value=True)
+    def test_worker_deadline_reports_unavailable(self, permission):
         with patch.object(online, 'run_result', return_value=ProcessResult('', -9, True, False)):
             self.assertEqual(online.isolated({'operation': 'check'})['status'], 'unavailable')
 

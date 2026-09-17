@@ -276,6 +276,12 @@ def main(argv=None):
         if not eligible:
             print('No eligible items to fetch')
             return 0
+        # -I bootstrap invocation does not include the script directory on sys.path.
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from network_permission import ask
+        if not ask('fetch the selected catalog PDFs from their displayed publishers, including robots checks and retries.'):
+            print('Cancelled; no manual downloads or destination writes.')
+            return 0
         fd = directory(args.dest, create=True)
         results = []
         try:
