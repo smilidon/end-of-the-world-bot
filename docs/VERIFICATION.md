@@ -2,8 +2,8 @@
 
 ## Current source inventory
 
-The source allowlist contains 102 files; the checksum manifest covers the other
-101 files. `tests/test_source_inventory.py` checks those counts, exact Git-index
+The source allowlist contains 109 files; the checksum manifest covers the other
+108 files. `tests/test_source_inventory.py` checks those counts, exact Git-index
 membership and inclusion of both first-run USB regression files. The inventory
 count regression introduced by PR #6 now lives in that dedicated test module;
 the portable installer behavior tests remain unchanged.
@@ -13,6 +13,44 @@ reachable committed trees. No historical membership bypass or installer-binary
 exception is used. New privacy regressions check unlisted worktree, staged and
 deleted historical files, and binary installers. A passing heuristic scan is not
 proof that every possible private identifier is absent.
+
+## Stage 3 retrieval, network permission and program update checks
+
+[Retrieval](RETRIEVAL.md) expands the existing lexical aliases in FTS queries
+without changing quoted evidence or requiring an index migration. Indexed
+candidates are checked against Stage 2 source hashes or generation provenance;
+changed, missing or unverifiable sources do not erase healthy results. Legacy
+indexes can use bounded current-file reads rather than return unchecked stale
+chunks. PDF fallback keeps page references; missing/corrupt indexes, unavailable
+archives and no matches have distinct status information.
+
+Explicit document commands take precedence over routing, incidental words such
+as "drive" do not select a geographic tool, and unrelated questions clear pending
+route state. The deterministic handlers and source-only fallback do not require
+a model or Internet connection.
+
+[Online operations](ONLINE.md) now require an interactive per-operation network
+approval, default No, before a connection check, DuckDuckGo search, document
+fetch, catalog download or current-bootstrap release request. Decline, EOF,
+Ctrl-C and non-interactive invocation do not grant approval. Offline cache reads
+neither prompt nor connect. Existing localhost-only model calls remain local.
+
+The standard-library update checker requests published GitHub release metadata
+only after approval. It compares numeric versions and release channels, retains
+dated cached results, and reports unknown status when no usable listing exists.
+It does not install or download updates, poll in the background, or identify
+unversioned branch changes. Entry points include `sh launch.sh updates` and
+`python3 update_checker.py`; `--offline` uses saved metadata only.
+
+Regression coverage lives in `tests/test_stage3_retrieval.py`,
+`tests/test_stage3_dispatch.py` and `tests/test_stage3_network.py`. The initial
+Stage 3 CI run at `4902344` ran 198 tests: 197 passed and the documentation inventory
+count test failed because this page still reported Stage 2's 102-file inventory.
+The counts are corrected here without weakening that test or changing runtime
+logic. This historical run did not execute its later clean-install, privacy,
+checksum or release-build steps. Consult the exact repaired head's Actions run
+and PR receipt for the complete verification outcome. Fixture tests do not
+establish live DuckDuckGo, publisher or GitHub-checker network compatibility.
 
 ## Stage 2 reliability and optional online preparation
 
