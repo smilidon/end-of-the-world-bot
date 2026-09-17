@@ -2,10 +2,10 @@
 
 ## Current source inventory
 
-The source allowlist contains 195 files; the checksum manifest covers the other
-194 files. `tests/test_source_inventory.py` checks those counts, exact Git-index
-membership and inclusion of both first-run USB regression files. No inventory
-test or privacy rule was relaxed to accept an unlisted file.
+The source allowlist contains 200 files; the checksum manifest covers the other
+199 files. `tests/test_source_inventory.py` checks the exact Git-index,
+release-allowlist and checksum-manifest membership, including the Windows USB regression files.
+No inventory test or privacy rule was relaxed to accept an unlisted file.
 
 ## Stage 3: retrieval, network permission and update checking
 
@@ -121,3 +121,14 @@ qualify Windows removable-drive behavior. CI dependency installation is separate
 from offline bot use. See [online boundaries](ONLINE.md),
 [retrieval limits](RETRIEVAL.md), [offline diagnostics](OFFLINE_DIAGNOSTICS.md),
 [network observations](NETWORK_DIAGNOSTICS.md) and [the license audit](LICENSE_AUDIT.md).
+
+## Windows static-reader qualification
+
+`create-usb.ps1` is a native PowerShell copier for a new destination on an
+already mounted drive. It validates the release allowlist and hashes, refuses
+overwrites and unsafe Windows paths, and can include one explicitly selected,
+previously generated `reference.html` file. The static page supports offline
+excerpt search and printing; it does not run the Bot, index documents, invoke a
+model or make the USB bootable. Synthetic PowerShell tests exercise the shipped
+script. Native Windows, physical removable media and FAT/exFAT power-loss
+behavior require separate release evidence before broader support claims.
