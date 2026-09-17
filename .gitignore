@@ -25,3 +25,6 @@ portable-install.json
 reference*.html
 diagnostics/
 data/
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
