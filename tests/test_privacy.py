@@ -42,6 +42,38 @@ class Privacy(unittest.TestCase):
             with patch.object(scan, 'ROOT', root), patch('builtins.print'):
                 self.assertTrue(scan.main())
 
+    def test_unlisted_worktree_and_binary_are_not_ignored(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / 'RELEASE_FILES.txt').write_text('RELEASE_FILES.txt\n')
+            (root / 'unexpected.txt').write_text('Synthetic ordinary data')
+            (root / 'installer.deb').write_bytes(b'\xff\x00')
+            with patch.object(scan, 'ROOT', root), patch('builtins.print') as output:
+                self.assertTrue(scan.main())
+            output.assert_any_call('unexpected.txt: not in source allowlist')
+            output.assert_any_call('installer.deb: not in source allowlist')
+            output.assert_any_call('installer.deb: binary')
+
+    def test_unlisted_staged_and_deleted_history_remain_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            def git(*args):
+                return subprocess.check_output(['git', '-C', td, *args], stderr=subprocess.DEVNULL)
+            git('init', '-q')
+            (root / 'RELEASE_FILES.txt').write_text('RELEASE_FILES.txt\n')
+            (root / 'unlisted.txt').write_text('Synthetic ordinary data, not a secret')
+            git('add', 'RELEASE_FILES.txt', 'unlisted.txt')
+            (root / 'unlisted.txt').unlink()
+            with patch.object(scan, 'ROOT', root), patch('builtins.print') as output:
+                self.assertTrue(scan.main())
+            output.assert_any_call('unlisted.txt: not in source allowlist')
+            git('-c', 'user.name=Synthetic Audit', '-c', 'user.email=example' + '@example.invalid', 'commit', '-qm', 'Synthetic staged inventory')
+            git('rm', '--cached', 'unlisted.txt')
+            git('-c', 'user.name=Synthetic Audit', '-c', 'user.email=example' + '@example.invalid', 'commit', '-qm', 'Synthetic removal')
+            with patch.object(scan, 'ROOT', root), patch('builtins.print') as output:
+                self.assertTrue(scan.main())
+            output.assert_any_call('unlisted.txt: not in source allowlist')
+
 
 if __name__ == '__main__':
     unittest.main()

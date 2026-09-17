@@ -8,8 +8,10 @@ python3 http_adapter.py --root library --model YOUR_INSTALLED_MODEL --artifacts 
 ```
 
 In a separately installed Open WebUI, import `openwebui_pipe.py` as a Function/Pipe
-and enable/select it using your administrator interface. No live UI was changed
-or authenticated import tested here. The Pipe declares Open WebUI 0.11.3 minimum,
+and enable/select it using your administrator interface. Open WebUI is optional
+and separately licensed; version 0.11.3 has branding restrictions. See the
+[dependency license audit](LICENSE_AUDIT.md), also covering PyMuPDF's AGPLv3 terms.
+No live UI was changed or authenticated import tested here. The Pipe declares Open WebUI 0.11.3 minimum,
 as the original does; later version compatibility is not independently qualified.
 Set `EOTWB_ADAPTER_URL` in the WebUI process if changing the adapter port; default
 is `http://127.0.0.1:8769/trial`. WebUI must share the adapter's loopback network
@@ -54,6 +56,7 @@ runtime and genuine route generation were not exercised in this release test.
 Illustrated `Guide:` generation is explicitly unavailable. The original exporter
 has project-specific document shortcuts and depends on a reviewed PDF allowlist;
 only its bounded artifact reader/server was selected here. Legacy coordinate/map
-lookup dispatch, private memory/recall, calculator and original history compression
-are not ported. No full-parity, whole-bot, authenticated UI or real-model claim.
+lookup dispatch, private memory/recall and original history compression
+are not ported. The current source includes deterministic `Calc:` arithmetic;
+see COMPACT_CONTEXT.md. No full-parity, whole-bot, authenticated UI or real-model claim.
 The original Pipe's `Trial:` footer is retained for wire/presentation compatibility.

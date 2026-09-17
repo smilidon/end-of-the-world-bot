@@ -150,9 +150,23 @@ Dependency installation needs network unless wheels/packages were cached first.
 - [License audit](docs/LICENSE_AUDIT.md), [attribution](NOTICE.md),
   [source allowlist](SOURCE_MANIFEST.json)
 
-GPL-3.0-only for this staged code. Independent dependencies and datasets keep their
-own licenses; no bundled dataset rights are implied. This is a reference tool,
-not medical advice or a guarantee of safe treatment, navigation or emergency readiness.
+## License and contributions
+
+The project software and original repository documentation are **GPL-3.0-only**;
+see [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md). You may use, modify and
+redistribute the software, including commercially, under that license.
+User-imported documents, maps, archives and model weights are separate works:
+their terms do not restrict the software license, and this license does not grant
+rights to those works. The manual catalog's personal/noncommercial scope applies
+to the referenced downloads, not to use of the software.
+
+The source package bundles no third-party runtimes or content. Optional PyMuPDF
+uses AGPLv3 terms; the separately installed Open WebUI frontend has its own
+branding restrictions. Neither changes the license of this repository's code;
+see the [dependency audit](docs/LICENSE_AUDIT.md) before assembling a distribution.
+The CLI does not require Open WebUI or a model.
+
+See [merged changes and contributing](CHANGELOG.md).
 
 ## Install and download manuals with any terminal agent
 

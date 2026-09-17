@@ -3,6 +3,7 @@ title: Emergency Offline Bot
 version: 0.2.0
 required_open_webui_version: 0.11.3
 """
+# SPDX-License-Identifier: GPL-3.0-only
 import os
 from urllib.parse import urlsplit
 import asyncio, hashlib, json, urllib.request, urllib.error, re

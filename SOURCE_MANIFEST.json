@@ -116,14 +116,14 @@
       "query"
     ],
     "source_sha256": "7bebd02d080fd1884a24f325cea45b8e9574aba42daa13a266fb69f90aa7855f",
-    "staged_sha256": "75ad9c6a02f35d0afc618333c8ac2fe07734dafa2abdcc79a044b5bbbf21f331"
+    "staged_sha256": "a30409dc4154cd5aca6b477a1e94cb1c0585cd5b5daa5949e96637e9b306ee82"
   },
   {
     "source": "compact-offline-trial/openwebui_pipe.py",
     "destination": "openwebui_pipe.py",
     "source_sha256": "1abee03e172687c08ec5d78dc8f494d30bc9283cdd84d62fd9826eb8fd543155",
     "modified": true,
-    "staged_sha256": "9c6144dadd84bbfe4251ee58d998d22354c538954eec813517f118e69654edd6"
+    "staged_sha256": "2410cc4ba10be809b68b72c02a468328ed535a01dfb76a3c86378dc0fc817e51"
   },
   {
     "source": "compact-offline-trial/trial.py",

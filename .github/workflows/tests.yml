@@ -14,9 +14,12 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y poppler-utils
       - name: Install PowerShell for USB copier tests
         run: |
+          set -euo pipefail
           source /etc/os-release
-          wget -q "https://packages.microsoft.com/config/ubuntu/${VERSION_ID}/packages-microsoft-prod.deb" -O packages-microsoft-prod.deb
-          sudo dpkg -i packages-microsoft-prod.deb
+          package_dir="$(mktemp -d "${RUNNER_TEMP:?}/powershell-repo.XXXXXX")"
+          trap 'rm -f -- "$package_dir/packages-microsoft-prod.deb"; rmdir -- "$package_dir"' EXIT
+          wget -q "https://packages.microsoft.com/config/ubuntu/${VERSION_ID}/packages-microsoft-prod.deb" -O "$package_dir/packages-microsoft-prod.deb"
+          sudo dpkg -i "$package_dir/packages-microsoft-prod.deb"
           sudo apt-get update
           sudo apt-get install -y powershell
           pwsh -NoLogo -NoProfile -NonInteractive -Command '$PSVersionTable.PSVersion.ToString()'

@@ -1,5 +1,6 @@
 reportlab==5.0.0
 Pillow==12.3.0
 
-# Original chat route export verification
+# Route PDF verification/previews: PyMuPDF uses AGPLv3 (free option).
+# Combined-work obligations: docs/LICENSE_AUDIT.md
 PyMuPDF==1.28.0
