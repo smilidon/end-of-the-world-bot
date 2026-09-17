@@ -2,8 +2,8 @@
 
 ## Current source inventory
 
-The source allowlist contains 96 files; the checksum manifest covers the other
-95 files. `tests/test_source_inventory.py` checks those counts, exact Git-index
+The source allowlist contains 102 files; the checksum manifest covers the other
+101 files. `tests/test_source_inventory.py` checks those counts, exact Git-index
 membership and inclusion of both first-run USB regression files. The inventory
 count regression introduced by PR #6 now lives in that dedicated test module;
 the portable installer behavior tests remain unchanged.
@@ -14,14 +14,47 @@ exception is used. New privacy regressions check unlisted worktree, staged and
 deleted historical files, and binary installers. A passing heuristic scan is not
 proof that every possible private identifier is absent.
 
+## Stage 2 reliability and optional online preparation
+
+`index_builder.py` replaces the destructive first-run rebuild with a staged,
+validated index and final publication. It preserves zero-byte/recognized-empty
+stubs on failure and refuses unrelated SQLite databases, including empty FTS
+indexes with additional user tables. File reads, directory discovery, file
+counts, total input, extraction output and subprocess execution are bounded.
+PDF extractor exit status, timeout, truncation and empty output are distinct from
+success. The live index is not created until all documents and source hashes pass.
+Source hashes, sizes, mtimes and indexing times are stored alongside the index.
+The CLI reports attempted/indexed/skipped/failed counts and publication status.
+
+The generation workflow shares the stricter extraction helper, checks free space
+before copying, flushes directory entries before publication, removes failed
+publication temporaries and reports post-commit flush failures as durability
+warnings rather than claiming the old generation is still active. It retains
+old and failed generations rather than automatically deleting owner data. Back
+up the active publication and referenced generation before manually reclaiming
+space; only clearly unreferenced generations should be removed while the bot is
+stopped. Power-loss guarantees still require filesystem/hardware qualification.
+
+Optional [online preparation](ONLINE.md) adds an explicit connection check,
+DuckDuckGo-only search through `ddgs`, dated offline result caching and bounded
+owner-selected document downloads into intake. Download receipts are hash-bound
+to generation provenance. No online dependency is added to offline runtime, and
+search results are not automatically promoted to indexed evidence.
+
+The new synthetic regression suites are `tests/test_stage2.py` and
+`tests/test_online_library.py`. An isolated local harness passed 29 focused
+checks using copied original path/publisher helpers; that was not the complete
+repository suite. Actual full-suite and clean-install results must be read from
+the current commit's Actions checks. Live provider requests and physical media
+were not qualified by those fixture tests.
+
 ## Stage 1 integration
 
 PR #6 contributes the contributor documentation, templates, security-contact
 route and privacy regressions. PR #4 retains the existing portable installation,
-immutable document generations, bounded diagnostics and compact-context work;
-this integration changes its inventory/tests/documentation, not those runtime
-implementations. Main-branch licensing and attribution updates are preserved.
-PR #9 is the dependent Windows static-reader copier, reviewed separately.
+immutable document generations, bounded diagnostics and compact-context work.
+Main-branch licensing and attribution updates are preserved. PR #9 is the
+dependent Windows static-reader copier, reviewed separately.
 
 The original failure at `da8cc23c608b5748851787aafba33531aaee8527` was two tracked
 synthetic tests missing from the release allowlist. Its unit-test and clean-install
@@ -68,7 +101,7 @@ unreleased source branch.
   At the pre-integration PR #9 head `8a3ee64`, CI ran 114 tests, including
   PowerShell copier tests on Ubuntu, before its privacy/inventory failure.
 
-## Qualification boundaries and separate diagnostic review
+## Qualification boundaries
 
 The install verifier uses isolated temporary HOME/source/simulated-drive paths,
 synthetic source/page references and unchanged-data sentinels. It exercises both
@@ -76,15 +109,14 @@ Bot and database modes, dry-run, index/search/export, document changes, failed
 rebuild preservation, no-model fallback and moved-folder reads. Log/network tests
 use fixtures, not live host logs or a physical Wi-Fi scan.
 
-Log discovery, redaction and optional network/Wi-Fi observations remain a
-separate privacy-sensitive review area. Their presence in the branch does not
-establish a root cause or authorize a scan; existing explicit consent and
-bounded-source rules remain in force. See [offline diagnostics](OFFLINE_DIAGNOSTICS.md)
-and [network observations](NETWORK_DIAGNOSTICS.md). Green synthetic tests are not
-a substitute for that review or for the later indexing/retrieval reliability work.
+Existing log and network-diagnostic consent boundaries remain unchanged; Stage 2
+prioritizes indexing reliability and useful optional network preparation rather
+than expanding the separate diagnostic review. See [offline diagnostics](OFFLINE_DIAGNOSTICS.md)
+and [network observations](NETWORK_DIAGNOSTICS.md).
 
 No fresh real-model inference, authenticated Open WebUI, real-map routing, native
 rendering, physical FAT/exFAT USB/power-loss, native Windows runtime, Raspberry Pi
 or phone-inference qualification is claimed here. PowerShell on Linux does not
-qualify Windows removable-drive behavior. No real user installations, services, models or documents were modified. CI
-test-environment dependency installation is separate from offline runtime use.
+qualify Windows removable-drive behavior. No real user installations, services,
+models or documents were modified. CI test-environment dependency installation
+is separate from offline runtime use.

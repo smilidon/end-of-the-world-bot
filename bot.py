@@ -13,67 +13,8 @@ from urllib.parse import urlsplit
 import library_access as library
 import citation_links
 from reference_helpers import run, clean
+from index_builder import build, IndexBuildError
 
-def build(root):
-    """Adapted from local-qa/ask.py build: same FTS5 schema and page chunks."""
-    if not root.is_dir():
-        raise ValueError('Create a dedicated library directory first')
-    directory = root / 'local-qa'
-    if directory.is_symlink():
-        raise ValueError('Index directory must not be a symlink')
-    directory.mkdir(exist_ok=True)
-    target = directory / 'guides.sqlite'
-    # First-run USB defect fix: installer-created empty index may be replaced
-    # after guides added; any valid nonempty index or symlink is refused.
-    symlink_refused = target.is_symlink()
-    if symlink_refused:
-        raise ValueError('Index is a symlink; must not be followed or replaced')
-    files = [f for f in library.catalog(root) if Path(f).suffix.lower() in {'.pdf','.html','.htm','.txt','.md','.mdx'}]
-    empty_index_replaced = False
-    if target.exists():
-        try:
-            with contextlib.closing(sqlite3.connect(str(target))) as probe:
-                has_table = probe.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='chunks'").fetchone() is not None
-                if has_table:
-                    count = probe.execute('SELECT COUNT(*) FROM chunks').fetchone()[0]
-                    if count > 0:
-                        raise ValueError('Index exists with data; move it aside explicitly before rebuilding')
-                    # Empty table: installer stub; replace only when guides present
-                    if len(files) == 0:
-                        raise ValueError('Index exists but is empty and no guides present')
-                else:
-                    # Not a valid SQLite FTS index (e.g. 0-byte installer stub).
-                    # Treat as empty index: replace only when guides present.
-                    if len(files) == 0:
-                        raise ValueError('Index exists but is empty and no guides present')
-        except sqlite3.Error:
-            raise ValueError('Index exists and is unreadable; preserve it by moving aside')
-        # Empty index + guides present: remove before exclusive create
-        target.unlink()
-        empty_index_replaced = True
-    elif len(files) == 0:
-        raise ValueError('No guides present for first-run index creation')
-    # Exclusive create: never follow symlink or replace pre-existing protected index.
-    fd = os.open(str(target), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
-    os.close(fd)
-    count = 0
-    with contextlib.closing(sqlite3.connect(target)) as db, db:
-        db.execute('CREATE VIRTUAL TABLE chunks USING fts5(title,file UNINDEXED,location UNINDEXED,date UNINDEXED,text)')
-        for name in files:
-            f = library.safe(root, name)
-            pdf = f.suffix.lower() == '.pdf'
-            raw = run(['pdftotext','-layout',f,'-'],12,5000000) if pdf else f.read_bytes()[:5000000].decode('utf8','replace')
-            pages = raw.split('\f') if pdf else [clean(raw) if f.suffix.lower() in {'.html','.htm'} else raw]
-            for page, text in enumerate(pages, 1):
-                text = ' '.join(text.split())
-                for offset in range(0,len(text),3000):
-                    chunk = text[offset:offset+3600]
-                    if len(chunk)<40:
-                        continue
-                    location = f'PDF page {page}, text offset {offset}' if pdf else f'text page {page} offset {offset}'
-                    db.execute('INSERT INTO chunks VALUES(?,?,?,?,?)',(f.stem,name,location,'publication date unverified',chunk))
-                    count += 1
-    return {'indexed_files':len(files),'chunks':count}
 
 def retrieve(root, question):
     sources, status, message = library.retrieve(question, root)
@@ -142,6 +83,9 @@ def main():
             a.retrieve_only=False
             result = model_query.query(a)
         print(json.dumps(result,indent=2,ensure_ascii=False))
+    except IndexBuildError as exc:
+        print(json.dumps(exc.report, indent=2, ensure_ascii=False), file=sys.stderr)
+        raise SystemExit(1)
     except (ValueError,OSError,sqlite3.Error) as exc:
         print(json.dumps({'error':type(exc).__name__,'message':'Local operation failed; check paths, dependencies and documented limits.'}),file=sys.stderr)
         raise SystemExit(1)

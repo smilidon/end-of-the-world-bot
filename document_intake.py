@@ -18,6 +18,8 @@ import time
 from document_workspace import directory
 import library_access
 import reference_browser
+from index_builder import read_bounded
+from reference_helpers import run_result
 
 FILE_LIMIT = 16 * 1024 * 1024
 TOTAL_LIMIT = 128 * 1024 * 1024
@@ -54,7 +56,7 @@ def active_library(app):
         except FileNotFoundError:
             return app / 'library'
         with os.fdopen(file_fd, 'rb') as stream:
-            info = os.fstat(stream.fileno())
+            info = os.fstat(file_fd)
             if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
                 raise ValueError('Reference publication must be a single-link regular file')
             marker = MARKER.match(stream.read(100))
@@ -116,6 +118,15 @@ def inventory(app):
                                 reason='unchanged' if previous and previous['sha256'] == digest else 'validated',
                                 sha256=digest, bytes=len(body), source_mtime_ns=info.st_mtime_ns,
                                 snapshot='guides/' + origin + '/' + name)
+                    # Carry download provenance only when the stored bytes match.
+                    if origin == 'intake':
+                        try:
+                            receipt = json.loads(read_bounded(app / 'data/downloads' / (name + '.json'), 16384)[0])
+                            if receipt.get('filename') == name and receipt.get('stored_sha256') == digest:
+                                item['download'] = {field: receipt[field] for field in
+                                                    ('source_url', 'final_url', 'retrieved_at', 'source_sha256', 'stored_sha256')}
+                        except (OSError, ValueError, TypeError, AttributeError, KeyError):
+                            pass
                     payloads[key] = body
                 except (OSError, ValueError, UnicodeError):
                     item.update(status='failed', reason='Unsafe, changed, unavailable, oversized or unextractable file; prior search preserved')
@@ -127,39 +138,19 @@ def inventory(app):
 
 
 def extract(path, budget_end):
+    if time.monotonic() >= budget_end:
+        raise ValueError('Reindex extraction deadline exceeded')
     if path.suffix.lower() != '.pdf':
-        text = path.read_text(encoding='utf-8')
-        if len(text.encode('utf-8')) > TEXT_LIMIT:
-            raise ValueError('Extracted text limit exceeded (2 MiB/file)')
-        return text
-    executable = shutil.which('pdftotext')
-    if not executable:
-        raise ValueError('PDF needs preinstalled Poppler pdftotext; prior search preserved')
-    # Fixed extractor only, never a shell/user-supplied command; bounded pipe and deadline.
-    end = min(budget_end, time.monotonic() + 12)
-    with subprocess.Popen([executable, '-layout', str(path), '-'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL) as process:
-        data = bytearray()
-        try:
-            with selectors.DefaultSelector() as selector:
-                selector.register(process.stdout, selectors.EVENT_READ)
-                while True:
-                    if time.monotonic() >= end:
-                        raise ValueError('PDF extraction deadline exceeded')
-                    if not selector.select(min(.1, end - time.monotonic())):
-                        continue
-                    part = os.read(process.stdout.fileno(), min(65536, TEXT_LIMIT + 1 - len(data)))
-                    if not part:
-                        break
-                    data.extend(part)
-                    if len(data) > TEXT_LIMIT:
-                        raise ValueError('PDF extraction size limit exceeded')
-            if process.wait(timeout=max(.001, end - time.monotonic())) or not data.strip():
-                raise ValueError('PDF not extractable; prior search preserved')
-        finally:
-            if process.poll() is None:
-                process.kill()
-                process.wait()
-    return data.decode('utf-8', 'replace')
+        text = read_bounded(path, TEXT_LIMIT)[0].decode('utf-8')
+    else:
+        executable = shutil.which('pdftotext')
+        if not executable:
+            raise ValueError('PDF needs preinstalled Poppler pdftotext; prior search preserved')
+        text = run_result([executable, '-layout', str(path), '-'],
+                          min(12, budget_end - time.monotonic()), TEXT_LIMIT).require_complete()
+    if not text.strip():
+        raise ValueError('Document has no extractable text; prior search preserved')
+    return text
 
 
 def build_generation(stage, documents):
@@ -209,11 +200,16 @@ def reindex(app):
         result = summarize(items, timestamp=now(), published=False)
         generation = secrets.token_hex(16)
         result['generation'] = generation
+        temp_name = None
         try:
             if result['counts']['failed']:
                 raise ValueError('Intake failed validation; prior index/export retained')
             if not payloads:
                 raise ValueError('No eligible documents; prior index/export retained')
+            # Old generations consume space, so check BEFORE copying the new one.
+            needed = sum(len(body) for body in payloads.values()) + TOTAL_TEXT_LIMIT * 4
+            if shutil.disk_usage(app / 'data').free < needed:
+                raise ValueError('Insufficient space for a new generation; prior search preserved')
             with directory(app / 'data/generations') as generations_fd:
                 os.mkdir(generation, 0o700, dir_fd=generations_fd)
             stage = app / 'data/generations' / generation
@@ -230,15 +226,22 @@ def reindex(app):
             export = reference_browser.export(stage / 'library', stage / 'reference.html')
             if export['truncated']:
                 raise ValueError('Browser export would be incomplete; prior index/export retained')
-            # Ensure inputs did not disappear/change while extracting PDFs/building.
             latest, latest_bodies = inventory(app)
             if any(item['status'] == 'failed' for item in latest) or payloads != latest_bodies:
                 raise ValueError('Intake changed during rebuild; retry after files finish copying')
-            # Flush the complete generation before a SINGLE atomic commit for CLI and browser.
             for path in stage.rglob('*'):
                 if path.is_file():
                     with path.open('rb') as stream:
                         os.fsync(stream.fileno())
+            # Flush child directory entries before publishing the generation pointer.
+            directories = sorted([stage, *[p for p in stage.rglob('*') if p.is_dir()]],
+                                 key=lambda p: len(p.parts), reverse=True)
+            for path in [*directories, stage.parent]:
+                fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY)
+                try:
+                    os.fsync(fd)
+                finally:
+                    os.close(fd)
             publication = '<!-- intake-generation: ' + generation + ' -->\n' + (stage / 'reference.html').read_text()
             temp_name = 'publish-' + generation + '.html'
             temp_fd = os.open(temp_name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=data_fd)
@@ -246,17 +249,31 @@ def reindex(app):
                 stream.write(publication)
                 stream.flush()
                 os.fsync(stream.fileno())
-            active_library(app)  # Refuse unsafe preexisting publication paths.
+            active_library(app)
             with directory(app) as app_fd:
                 os.replace(temp_name, 'reference.html', src_dir_fd=data_fd, dst_dir_fd=app_fd)
-            result['published'] = True
+                result['published'] = True
+                # Once committed, a later flush failure is a durability warning,
+                # not a false claim that the old generation is still active.
+                try:
+                    os.fsync(app_fd)
+                    os.fsync(data_fd)
+                except OSError:
+                    result['durability_warning'] = 'Published; directory flush failed. Back up and verify after restart.'
             result['browser'] = 'reference.html (reload after successful reindex)'
         except (OSError, ValueError, sqlite3.Error, subprocess.SubprocessError) as exc:
             result['error'] = str(exc)
             if not result['counts']['failed']:
                 result['items'].append({'status': 'failed', 'reason': 'Rebuild/publication failed; prior search remains active'})
                 result['counts']['failed'] += 1
-        # The report is auxiliary: if saving it fails, do not misreport a committed publication.
+        finally:
+            if temp_name is not None:
+                try:
+                    os.unlink(temp_name, dir_fd=data_fd)
+                except FileNotFoundError:
+                    pass
+                except OSError:
+                    result['cleanup_warning'] = 'An unpublished temporary HTML file remains in data/'
         name = 'intake-results-' + generation + '.json'
         try:
             report_fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=data_fd)
