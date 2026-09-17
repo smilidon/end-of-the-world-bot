@@ -9,8 +9,8 @@
 - LICENSE matched the GNU-published GPLv3 text byte-for-byte. All 37 Python/Java/
   shell files carry GPL-3.0-only SPDX headers; adding the Pipe's missing comment
   leaves its parsed Python AST unchanged. All 21 staged provenance hashes match.
-- The source allowlist contains 64 files; the checksum manifest covers the other
-  63 files. Original source hashes and existing alpha.2 bootstrap pins remain
+- The source allowlist contains 69 files; the checksum manifest covers the other
+  68 files. Original source hashes and existing alpha.2 bootstrap pins remain
   historical evidence, not new provenance or release verification.
 - Shared-worktree privacy scanning also traverses unrelated feature refs; use the
   single-branch procedure in [PUBLISH.md](PUBLISH.md) to qualify this branch's
