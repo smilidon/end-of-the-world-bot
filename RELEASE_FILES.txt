@@ -79,6 +79,7 @@
 .claude/settings.json
 .claude/skills/archify/SKILL.md
 .claude/skills/graft/SKILL.md
+.gitattributes
 .github/ISSUE_TEMPLATE/bug_report.md
 .github/ISSUE_TEMPLATE/feature_request.md
 .github/pull_request_template.md
@@ -111,6 +112,7 @@ bot.py
 citation_links.py
 compact_context.py
 corridor_routing.py
+create-usb.ps1
 diagnostic_guides/dependencies.md
 diagnostic_guides/local-inference.md
 diagnostic_guides/permissions.md
@@ -129,11 +131,13 @@ docs/MANUAL_CATALOG.md
 docs/NETWORK_DIAGNOSTICS.md
 docs/OFFLINE_DIAGNOSTICS.md
 docs/ONLINE.md
+docs/PROJECT_STATUS.md
 docs/PUBLISH.md
 docs/RECOVERY.md
 docs/RETRIEVAL.md
 docs/ROUTING.md
 docs/VERIFICATION.md
+docs/WINDOWS_USB.md
 document_intake.py
 document_workspace.py
 download_manuals.py
@@ -170,6 +174,7 @@ requirements-test.txt
 retrieval_support.py
 route_adapter.py
 tests/test_chat.py
+tests/test_ci_workspace.py
 tests/test_compact_context.py
 tests/test_core.py
 tests/test_diagnostic_logs.py
@@ -189,6 +194,7 @@ tests/test_stage3_network.py
 tests/test_stage3_retrieval.py
 tests/test_usb_browser_defect.py
 tests/test_usb_defect.py
+tests/test_windows_usb.py
 tools/build_release.py
 tools/privacy_scan.py
 tools/verify_clean_install.py
