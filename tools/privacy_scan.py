@@ -13,7 +13,7 @@ RULES = {
     'email': r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}',
     'url_credentials': r'https?://[^\s/]+:[^\s/]+@',
 }
-IGNORED = {'.git', '.venv', '__pycache__', '.pytest_cache'}
+IGNORED = {'.git', '.venv', '__pycache__', '.pytest_cache', 'graft'}
 
 
 def inspect(name, body, allowed, check_allowlist=True):
