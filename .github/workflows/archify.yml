@@ -1,6 +1,6 @@
-# Release workflow for the verified portable source package.
-# Releases are intentionally manual: bump VERSION in a reviewed PR, merge to main,
-# then run this workflow from the Actions tab.
+# Verified release workflow for Linux and beginner-friendly Windows installation.
+# Releases are manual: bump VERSION in a reviewed PR, merge to main, then run this
+# workflow from the Actions tab.
 
 name: Archify Release
 
@@ -15,9 +15,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  release:
-    name: Verify, build, and publish release
+  verify-build:
+    name: Verify and build release payload
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      archive: ${{ steps.version.outputs.archive }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
     steps:
       - name: Require main branch
         shell: bash
@@ -56,14 +61,11 @@ jobs:
             echo "Invalid VERSION: ${VERSION}" >&2
             exit 1
           fi
-
           TAG="v${VERSION}"
           ARCHIVE="end-of-the-world-bot-${VERSION}-linux-python.zip"
-
           echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
           echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
           echo "archive=${ARCHIVE}" >> "${GITHUB_OUTPUT}"
-
           if [[ "${VERSION}" == *-* ]]; then
             echo "prerelease=true" >> "${GITHUB_OUTPUT}"
           else
@@ -91,7 +93,7 @@ jobs:
           python tools/privacy_scan.py
           sha256sum -c FILE_MANIFEST.sha256
 
-      - name: Build deterministic release package
+      - name: Build deterministic portable package
         env:
           EXPECTED_ARCHIVE: ${{ steps.version.outputs.archive }}
         shell: bash
@@ -99,15 +101,13 @@ jobs:
           set -euo pipefail
           rm -rf dist
           mkdir dist
-
           python tools/build_release.py --output dist
-
           if [[ ! -f "dist/${EXPECTED_ARCHIVE}" ]]; then
             echo "Expected release archive was not produced: ${EXPECTED_ARCHIVE}" >&2
             exit 1
           fi
-
           cp docs/AGENT_SETUP.md dist/AGENT_SETUP.md
+          cp docs/WINDOWS_INSTALL.md dist/WINDOWS_INSTALL.md
           cp bootstrap.py dist/bootstrap.py
           cp download_manuals.py dist/download_manuals.py
           cp INSTALL_AND_DOWNLOAD.md dist/INSTALL_AND_DOWNLOAD.md
@@ -116,28 +116,164 @@ jobs:
           cp NOTICE.md dist/NOTICE.md
           cp START_HERE.md dist/START_HERE.md
 
-          (
-            cd dist
-            sha256sum               "${EXPECTED_ARCHIVE}"               AGENT_SETUP.md               bootstrap.py               download_manuals.py               INSTALL_AND_DOWNLOAD.md               LICENSE               manuals.json               NOTICE.md               START_HERE.md               > SHA256SUMS
-            sha256sum --ignore-missing -c SHA256SUMS
-          )
-
-      - name: Preserve built assets as workflow artifact
+      - name: Preserve verified base assets
         uses: actions/upload-artifact@v4
         with:
-          name: release-${{ steps.version.outputs.version }}
+          name: release-base-${{ steps.version.outputs.version }}
           path: dist/*
           if-no-files-found: error
           retention-days: 30
 
+  windows-installer:
+    name: Build Windows Setup EXE
+    needs: verify-build
+    runs-on: windows-2025
+    steps:
+      - name: Download verified release payload
+        uses: actions/download-artifact@v4
+        with:
+          name: release-base-${{ needs.verify-build.outputs.version }}
+          path: release
+
+      - name: Extract verified portable package
+        shell: pwsh
+        env:
+          ARCHIVE: ${{ needs.verify-build.outputs.archive }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $archive = Join-Path $PWD "release\$env:ARCHIVE"
+          if (-not (Test-Path -LiteralPath $archive -PathType Leaf)) {
+            throw "Missing verified release archive: $archive"
+          }
+          New-Item -ItemType Directory -Path staging | Out-Null
+          Expand-Archive -LiteralPath $archive -DestinationPath staging
+          $roots = @(Get-ChildItem -LiteralPath staging -Directory)
+          if ($roots.Count -ne 1) {
+            throw "Expected one top-level release directory, found $($roots.Count)."
+          }
+          "PAYLOAD_DIR=$($roots[0].FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Locate Inno Setup compiler
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $command = Get-Command ISCC.exe -ErrorAction SilentlyContinue
+          if ($command) {
+            $iscc = $command.Source
+          } else {
+            $iscc = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
+          }
+          if (-not (Test-Path -LiteralPath $iscc -PathType Leaf)) {
+            throw 'Inno Setup compiler is not available on the Windows runner.'
+          }
+          "ISCC=$iscc" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Compile Windows installer
+        shell: pwsh
+        env:
+          VERSION: ${{ needs.verify-build.outputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Path installer-out | Out-Null
+          $iss = Join-Path $env:PAYLOAD_DIR 'packaging\windows\EndOfWorldBot.iss'
+          if (-not (Test-Path -LiteralPath $iss -PathType Leaf)) {
+            throw "Installer definition missing from verified payload: $iss"
+          }
+          $arguments = @(
+            "/DVersion=$env:VERSION",
+            "/DSourceDir=$env:PAYLOAD_DIR",
+            "/DOutputDir=$((Resolve-Path installer-out).Path)",
+            $iss
+          )
+          & $env:ISCC @arguments
+          if ($LASTEXITCODE -ne 0) {
+            throw "Inno Setup failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Smoke-test silent installation
+        shell: pwsh
+        env:
+          VERSION: ${{ needs.verify-build.outputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $setup = Join-Path $PWD "installer-out\EndOfWorldBot-Windows-Setup-$env:VERSION.exe"
+          if (-not (Test-Path -LiteralPath $setup -PathType Leaf)) {
+            throw "Windows installer was not produced: $setup"
+          }
+          $target = Join-Path $env:RUNNER_TEMP 'eotw-windows-install-smoke'
+          $proc = Start-Process -FilePath $setup -ArgumentList @(
+            '/VERYSILENT',
+            '/SUPPRESSMSGBOXES',
+            '/NORESTART',
+            "/DIR=$target"
+          ) -Wait -PassThru
+          if ($proc.ExitCode -ne 0) {
+            throw "Silent installer smoke test failed with exit code $($proc.ExitCode)."
+          }
+          foreach ($required in @(
+            'VERSION',
+            'RELEASE_FILES.txt',
+            'windows\EndOfWorldBot-Setup.cmd',
+            'windows\setup-windows.ps1',
+            'windows\setup-wsl.sh',
+            'docs\WINDOWS_INSTALL.md'
+          )) {
+            if (-not (Test-Path -LiteralPath (Join-Path $target $required) -PathType Leaf)) {
+              throw "Installed file missing: $required"
+            }
+          }
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer-${{ needs.verify-build.outputs.version }}
+          path: installer-out/*.exe
+          if-no-files-found: error
+          retention-days: 30
+
+  publish:
+    name: Publish GitHub release
+    needs:
+      - verify-build
+      - windows-installer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository for tag creation
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download verified base assets
+        uses: actions/download-artifact@v4
+        with:
+          name: release-base-${{ needs.verify-build.outputs.version }}
+          path: dist
+
+      - name: Download Windows installer
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-installer-${{ needs.verify-build.outputs.version }}
+          path: dist
+
+      - name: Generate release checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          (
+            cd dist
+            find . -maxdepth 1 -type f ! -name SHA256SUMS -printf '%f\0' |
+              sort -z |
+              xargs -0 sha256sum > SHA256SUMS
+            sha256sum --ignore-missing -c SHA256SUMS
+          )
+
       - name: Create or verify release tag
         env:
-          TAG: ${{ steps.version.outputs.tag }}
+          TAG: ${{ needs.verify-build.outputs.tag }}
         shell: bash
         run: |
           set -euo pipefail
           git fetch --force --tags origin
-
           if git rev-parse --verify --quiet "refs/tags/${TAG}" >/dev/null; then
             TAG_COMMIT="$(git rev-list -n 1 "${TAG}")"
             if [[ "${TAG_COMMIT}" != "${GITHUB_SHA}" ]]; then
@@ -155,13 +291,11 @@ jobs:
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.version.outputs.tag }}
-          VERSION: ${{ steps.version.outputs.version }}
-          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+          TAG: ${{ needs.verify-build.outputs.tag }}
+          PRERELEASE: ${{ needs.verify-build.outputs.prerelease }}
         shell: bash
         run: |
           set -euo pipefail
-
           args=(
             release create "${TAG}"
             --repo "${GITHUB_REPOSITORY}"
@@ -169,22 +303,7 @@ jobs:
             --title "${TAG}"
             --generate-notes
           )
-
           if [[ "${PRERELEASE}" == "true" ]]; then
             args+=(--prerelease)
           fi
-
-          assets=(
-            dist/*.zip
-            dist/SHA256SUMS
-            dist/AGENT_SETUP.md
-            dist/bootstrap.py
-            dist/download_manuals.py
-            dist/INSTALL_AND_DOWNLOAD.md
-            dist/LICENSE
-            dist/manuals.json
-            dist/NOTICE.md
-            dist/START_HERE.md
-          )
-
-          gh "${args[@]}" "${assets[@]}"
+          gh "${args[@]}" dist/*
