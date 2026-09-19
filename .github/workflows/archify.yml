@@ -101,11 +101,14 @@ jobs:
           set -euo pipefail
           rm -rf dist
           mkdir dist
-          python tools/build_release.py --output dist
-          if [[ ! -f "dist/${EXPECTED_ARCHIVE}" ]]; then
+          BUILD_DIR="$(mktemp -d "${RUNNER_TEMP:?}/eotw-release.XXXXXX")"
+          trap 'rm -rf -- "$BUILD_DIR"' EXIT
+          python tools/build_release.py --output "$BUILD_DIR"
+          if [[ ! -f "$BUILD_DIR/${EXPECTED_ARCHIVE}" ]]; then
             echo "Expected release archive was not produced: ${EXPECTED_ARCHIVE}" >&2
             exit 1
           fi
+          cp "$BUILD_DIR/${EXPECTED_ARCHIVE}" "dist/${EXPECTED_ARCHIVE}"
           cp docs/AGENT_SETUP.md dist/AGENT_SETUP.md
           cp docs/WINDOWS_INSTALL.md dist/WINDOWS_INSTALL.md
           cp bootstrap.py dist/bootstrap.py
