@@ -47,9 +47,17 @@ This is a **Windows installer for a WSL-backed Linux application**. It is not ye
 
 The setup assistant does not format disks, modify boot settings, or silently join networks. If WSL or Linux packages need installation, it asks first.
 
-## SmartScreen
+## SmartScreen / "Unknown publisher"
 
-This project does not currently use a paid Windows code-signing certificate. Windows may therefore show an **Unknown publisher** / SmartScreen warning for a newly downloaded installer. Verify the release SHA-256 value from `SHA256SUMS` on the GitHub release page before running it.
+Windows may show **Microsoft Defender SmartScreen** or an **Unknown publisher** warning when you run the installer.
+
+That warning is expected for this project. End of the World Bot is a **free, open-source project** and we currently do not have the resources to pay for a commercial Windows code-signing certificate. The warning does **not** mean the installer is known to be malicious; it means Windows cannot verify a paid publisher identity for the executable.
+
+Before continuing, verify that you downloaded the installer from the project's official GitHub release page and check its SHA-256 value against `SHA256SUMS` from the same release.
+
+On current Windows versions, the SmartScreen dialog may require you to choose **More info** and then **Run anyway** to continue. Only do that after you have verified the release source and checksum.
+
+We will revisit code signing if the project gains the funding or sponsorship needed to support it.
 
 ## Uninstall
 
