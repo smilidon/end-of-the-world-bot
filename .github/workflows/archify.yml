@@ -1,27 +1,33 @@
-# Archify Workflow
-# Creates release archives and manages release assets automatically
+# Release workflow for the verified portable source package.
+# Releases are intentionally manual: bump VERSION in a reviewed PR, merge to main,
+# then run this workflow from the Actions tab.
 
-name: Archify
+name: Archify Release
+
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version tag (e.g., v1.0.0)'
-        required: false
-        type: string
 
 permissions:
   contents: write
-  packages: write
+
+concurrency:
+  group: archify-release
+  cancel-in-progress: false
 
 jobs:
-  archify:
-    name: Create Release Archive
+  release:
+    name: Verify, build, and publish release
     runs-on: ubuntu-latest
     steps:
+      - name: Require main branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "Releases must be run from the main branch; got ${GITHUB_REF}." >&2
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -32,56 +38,153 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Get version from tag
-        id: version
+      - name: Install test prerequisites
+        shell: bash
         run: |
-          if [ -n "${{ github.event.inputs.version }}" ]; then
-            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          else
-            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+          python -m pip install -r requirements-test.txt
+
+      - name: Resolve release version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          if [[ ! "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid VERSION: ${VERSION}" >&2
+            exit 1
           fi
 
-      - name: Create release archive
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          REPO_NAME=$(basename "${GITHUB_REPOSITORY}")
-          ARCHIVE_NAME="${REPO_NAME}-${VERSION}.tar.gz"
-          
-          # Create archive excluding .git
-          git archive --format=tar.gz --prefix="${REPO_NAME}-${VERSION}/" \
-            -o "${ARCHIVE_NAME}" "${VERSION}"
-          
-          # Also create zip for Windows users
-          git archive --format=zip --prefix="${REPO_NAME}-${VERSION}/" \
-            -o "${REPO_NAME}-${VERSION}.zip" "${VERSION}"
-          
-          # Generate checksums
-          sha256sum "${ARCHIVE_NAME}" "${REPO_NAME}-${VERSION}.zip" > checksums.txt
-          
-          echo "archive_tar=${ARCHIVE_NAME}" >> $GITHUB_OUTPUT
-          echo "archive_zip=${REPO_NAME}-${VERSION}.zip" >> $GITHUB_OUTPUT
+          TAG="v${VERSION}"
+          ARCHIVE="end-of-the-world-bot-${VERSION}-linux-python.zip"
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.version.outputs.version }}
-          name: Release ${{ steps.version.outputs.version }}
-          draft: false
-          prerelease: false
-          files: |
-            ${{ steps.create-archive.outputs.archive_tar }}
-            ${{ steps.create-archive.outputs.archive_zip }}
-            checksums.txt
-          generate_release_notes: true
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
+          echo "archive=${ARCHIVE}" >> "${GITHUB_OUTPUT}"
+
+          if [[ "${VERSION}" == *-* ]]; then
+            echo "prerelease=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "prerelease=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Refuse an already-published release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists. Bump VERSION before publishing another release." >&2
+            exit 1
+          fi
 
-      - name: Upload artifacts
+      - name: Run verified release gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -v
+          python tools/verify_clean_install.py --source .
+          python tools/privacy_scan.py
+          sha256sum -c FILE_MANIFEST.sha256
+
+      - name: Build deterministic release package
+        env:
+          EXPECTED_ARCHIVE: ${{ steps.version.outputs.archive }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          mkdir dist
+
+          python tools/build_release.py --output dist
+
+          if [[ ! -f "dist/${EXPECTED_ARCHIVE}" ]]; then
+            echo "Expected release archive was not produced: ${EXPECTED_ARCHIVE}" >&2
+            exit 1
+          fi
+
+          cp docs/AGENT_SETUP.md dist/AGENT_SETUP.md
+          cp bootstrap.py dist/bootstrap.py
+          cp download_manuals.py dist/download_manuals.py
+          cp INSTALL_AND_DOWNLOAD.md dist/INSTALL_AND_DOWNLOAD.md
+          cp LICENSE dist/LICENSE
+          cp manuals.json dist/manuals.json
+          cp NOTICE.md dist/NOTICE.md
+          cp START_HERE.md dist/START_HERE.md
+
+          (
+            cd dist
+            sha256sum               "${EXPECTED_ARCHIVE}"               AGENT_SETUP.md               bootstrap.py               download_manuals.py               INSTALL_AND_DOWNLOAD.md               LICENSE               manuals.json               NOTICE.md               START_HERE.md               > SHA256SUMS
+            sha256sum --ignore-missing -c SHA256SUMS
+          )
+
+      - name: Preserve built assets as workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-archives
-          path: |
-            *.tar.gz
-            *.zip
-            checksums.txt
+          name: release-${{ steps.version.outputs.version }}
+          path: dist/*
+          if-no-files-found: error
           retention-days: 30
+
+      - name: Create or verify release tag
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --force --tags origin
+
+          if git rev-parse --verify --quiet "refs/tags/${TAG}" >/dev/null; then
+            TAG_COMMIT="$(git rev-list -n 1 "${TAG}")"
+            if [[ "${TAG_COMMIT}" != "${GITHUB_SHA}" ]]; then
+              echo "Tag ${TAG} already exists at ${TAG_COMMIT}, not release commit ${GITHUB_SHA}." >&2
+              exit 1
+            fi
+            echo "Existing tag ${TAG} already points to this commit; continuing."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "${TAG}" -m "Release ${TAG}" "${GITHUB_SHA}"
+            git push origin "${TAG}"
+          fi
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          args=(
+            release create "${TAG}"
+            --repo "${GITHUB_REPOSITORY}"
+            --verify-tag
+            --title "${TAG}"
+            --generate-notes
+          )
+
+          if [[ "${PRERELEASE}" == "true" ]]; then
+            args+=(--prerelease)
+          fi
+
+          assets=(
+            dist/*.zip
+            dist/SHA256SUMS
+            dist/AGENT_SETUP.md
+            dist/bootstrap.py
+            dist/download_manuals.py
+            dist/INSTALL_AND_DOWNLOAD.md
+            dist/LICENSE
+            dist/manuals.json
+            dist/NOTICE.md
+            dist/START_HERE.md
+          )
+
+          gh "${args[@]}" "${assets[@]}"
