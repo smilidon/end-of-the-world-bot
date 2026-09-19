@@ -156,6 +156,7 @@ offline_diagnostics.py
 online_library.py
 openwebui_pipe.py
 portable.py
+pyproject.toml
 README.md
 reference_browser.py
 reference_helpers.py
