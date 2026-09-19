@@ -113,6 +113,7 @@ docs/RECOVERY.md
 docs/RETRIEVAL.md
 docs/ROUTING.md
 docs/VERIFICATION.md
+docs/WINDOWS_INSTALL.md
 document_intake.py
 document_workspace.py
 download_manuals.py
@@ -155,6 +156,7 @@ NOTICE.md
 offline_diagnostics.py
 online_library.py
 openwebui_pipe.py
+packaging/windows/EndOfWorldBot.iss
 portable.py
 pyproject.toml
 README.md
@@ -176,6 +178,7 @@ tests/test_diagnostic_logs.py
 tests/test_diagnostics.py
 tests/test_flash_install.py
 tests/test_intake.py
+tests/test_windows_installer.py
 tests/test_manuals.py
 tests/test_network_diagnostics.py
 tests/test_online_library.py
@@ -192,5 +195,8 @@ tests/test_usb_defect.py
 tools/build_release.py
 tools/privacy_scan.py
 tools/verify_clean_install.py
+windows/EndOfWorldBot-Setup.cmd
+windows/setup-windows.ps1
+windows/setup-wsl.sh
 update_checker.py
 VERSION
