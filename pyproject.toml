@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "end-of-the-world-bot"
+version = "0.1.0a2"
+description = "Offline reference assistant: local document search and optional local-AI question answering, no internet required to run."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+dependencies = []
+
+[project.optional-dependencies]
+maps = [
+    "CairoSVG>=2.7,<3",
+    "Pillow>=12,<13",
+    "reportlab>=5,<6",
+    "PyMuPDF==1.28.0",
+]
+online = [
+    "ddgs>=9,<10",
+]
+
+[project.scripts]
+eotw-bot = "bot:main"
+
+[tool.setuptools]
+py-modules = [
+    "bot", "bootstrap", "citation_links", "compact_context", "corridor_routing",
+    "diagnostic_logs", "document_intake", "document_workspace", "download_manuals",
+    "flash_install", "http_adapter", "index_builder", "library_access", "model_query",
+    "multistate_routing", "named_routing", "network_diagnostics", "network_permission",
+    "offline_diagnostics", "online_library", "openwebui_pipe", "portable",
+    "reference_browser", "reference_helpers", "retrieval_support", "route_adapter",
+    "update_checker",
+]
