@@ -2,8 +2,8 @@
 
 ## Current source inventory
 
-The source allowlist contains 196 files; the checksum manifest covers the other
-195 files. `tests/test_source_inventory.py` checks those counts, exact Git-index
+The source allowlist contains 202 files; the checksum manifest covers the other
+201 files. `tests/test_source_inventory.py` checks those counts, exact Git-index
 membership and inclusion of both first-run USB regression files. No inventory
 test or privacy rule was relaxed to accept an unlisted file.
 
@@ -35,6 +35,8 @@ metadata only. The published alpha.2 assets have not been replaced by this work.
 
 The new regression suites are `tests/test_stage3_retrieval.py`,
 `tests/test_stage3_dispatch.py` and `tests/test_stage3_network.py`.
+Windows installer packaging is covered by `tests/test_windows_installer.py`; the
+release workflow also smoke-tests the generated Setup EXE on Windows Server 2025.
 
 ## Concurrent main-branch integration
 
