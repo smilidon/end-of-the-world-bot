@@ -4,6 +4,9 @@
 
 ## Windows installer (current source)
 
+> **Windows SmartScreen note:** the Windows installer may show **Unknown publisher**. This is expected because End of the World Bot is a free, open-source project and we currently do not have the resources to fund a commercial Windows code-signing certificate. Verify the installer against `SHA256SUMS` from the official GitHub release before choosing **More info → Run anyway**. See [the Windows install guide](docs/WINDOWS_INSTALL.md).
+
+
 A beginner-friendly Windows installer is now built by the release workflow as `EndOfWorldBot-Windows-Setup-<version>.exe`. It installs the verified release files per-user and launches a guided setup assistant for Windows Subsystem for Linux (WSL). The full Bot still runs inside Linux/WSL rather than as a native Windows rewrite. See [the Windows install guide](docs/WINDOWS_INSTALL.md).
 
 Clone/download this repository and run **`sh install.sh`** for interactive drive
