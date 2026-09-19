@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "end-of-the-world-bot"
-version = "0.1.0a2"
+version = "0.1.0a3"
 description = "Offline reference assistant: local document search and optional local-AI question answering, no internet required to run."
 readme = "README.md"
 requires-python = ">=3.11"

@@ -3,7 +3,7 @@
 This summary covers work actually merged into `main` through
 `f0d6908310632e909bf141a96c1743e5f4dc6267`. Dates below are UTC.
 
-- **2026-09-13 — v0.1.0-alpha.2 ([#3](https://github.com/smilidon/end-of-the-world-bot/pull/3)):**
+- **2026-09-13 — v0.1.0-alpha.3 ([#3](https://github.com/smilidon/end-of-the-world-bot/pull/3)):**
   Added the publisher-referenced manual catalog and terminal-agent setup
   documentation. The source package contains no manuals or model weights.
 - **2026-09-13 — v0.1.0-alpha.1 ([#2](https://github.com/smilidon/end-of-the-world-bot/pull/2)):**
