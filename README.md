@@ -2,6 +2,10 @@
 
 ## Portable flash-drive installation (current source)
 
+## Windows installer (current source)
+
+A beginner-friendly Windows installer is now built by the release workflow as `EndOfWorldBot-Windows-Setup-<version>.exe`. It installs the verified release files per-user and launches a guided setup assistant for Windows Subsystem for Linux (WSL). The full Bot still runs inside Linux/WSL rather than as a native Windows rewrite. See [the Windows install guide](docs/WINDOWS_INSTALL.md).
+
 Clone/download this repository and run **`sh install.sh`** for interactive drive
 selection. **Bot is the default**; browser/database-only mode generates a static
 offline reference page without inference. Models are optional and normally stay
