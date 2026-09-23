@@ -15,7 +15,7 @@ import tempfile
 import urllib.request
 import zipfile
 
-VERSION = '0.1.0-alpha.3'
+VERSION = '0.1.0-beta.1'
 BASE = 'https://github.com/smilidon/end-of-the-world-bot/releases/download/v' + VERSION + '/'
 
 

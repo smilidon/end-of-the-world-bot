@@ -26,6 +26,24 @@ class Portable(unittest.TestCase):
             bundle.extractall(self.base / 'USB with spaces')
         self.app = self.base / 'USB with spaces' / self.archive.stem
 
+    def test_release_version_accepts_prerelease_channels_only(self):
+        import tools.build_release as builder
+        accepted = ['0.1.0-alpha.3', '0.1.0-beta.1', '1.0.0-rc.2']
+        refused = ['0.1.0', '0.1.0-beta', '0.1.0-nightly.1', 'v0.1.0-beta.1', '']
+        for version in accepted + refused:
+            with self.subTest(version=version), \
+                 patch.object(builder, 'package_files',
+                              return_value={'VERSION': version.encode()}):
+                if version in accepted:
+                    # Passes the version gate, then stops at the output-path guard.
+                    with self.assertRaises(ValueError) as caught:
+                        builder.build(ROOT, ROOT / 'output')
+                    self.assertNotIn('Invalid release version', str(caught.exception))
+                else:
+                    with self.assertRaises(ValueError) as caught:
+                        builder.build(ROOT, self.base / 'refused')
+                    self.assertIn('Invalid release version', str(caught.exception))
+
     def run_script(self, *args, app=None, script='launch.sh', env=None, success=True):
         result = subprocess.run(['/bin/sh', str((app or self.app) / script), *args],
                                 cwd=self.base, text=True, capture_output=True,

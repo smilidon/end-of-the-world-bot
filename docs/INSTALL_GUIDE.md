@@ -1,7 +1,7 @@
 # End of the World Bot — Installation and Usage Guide
 
 This guide ships with the project. It covers release
-[v0.1.0-alpha.3](https://github.com/smilidon/end-of-the-world-bot/releases/tag/v0.1.0-alpha.3)
+[v0.1.0-beta.1](https://github.com/smilidon/end-of-the-world-bot/releases/tag/v0.1.0-beta.1)
 (2026-09-19) of [End of the World Bot](https://github.com/smilidon/end-of-the-world-bot): how to
 download and verify it, index your own documents, add new files later without losing your existing
 search, and optionally attach a small local AI model.
@@ -26,9 +26,9 @@ macOS is not supported by this release.
 ```sh
 mkdir -p ~/eotwb && cd ~/eotwb
 curl -L -o linux-python.zip \
-  https://github.com/smilidon/end-of-the-world-bot/releases/download/v0.1.0-alpha.3/end-of-the-world-bot-0.1.0-alpha.3-linux-python.zip
+  https://github.com/smilidon/end-of-the-world-bot/releases/download/v0.1.0-beta.1/end-of-the-world-bot-0.1.0-beta.1-linux-python.zip
 curl -L -o SHA256SUMS \
-  https://github.com/smilidon/end-of-the-world-bot/releases/download/v0.1.0-alpha.3/SHA256SUMS
+  https://github.com/smilidon/end-of-the-world-bot/releases/download/v0.1.0-beta.1/SHA256SUMS
 sha256sum --ignore-missing -c SHA256SUMS
 ```
 
@@ -36,14 +36,14 @@ Confirm the ZIP reports `OK` before continuing. Do not extract an unverified arc
 
 ```sh
 python3 -m zipfile -e linux-python.zip .
-cd end-of-the-world-bot-0.1.0-alpha.3-linux-python   # folder name from the extracted ZIP
+cd end-of-the-world-bot-0.1.0-beta.1-linux-python   # folder name from the extracted ZIP
 sh launch.sh doctor
 ```
 
 `doctor` checks your Python version, SQLite FTS5 support, and whether `pdftotext` is available.
 Fix anything it flags before moving on.
 
-Full details: [START_HERE.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-alpha.3/START_HERE.md)
+Full details: [START_HERE.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-beta.1/START_HERE.md)
 
 ## 2. Install a local copy
 
@@ -53,8 +53,8 @@ intake and reindex workflow in section 4: the installer creates the `data/intake
 them.
 
 ```sh
-sh install.sh --dest "$HOME/.local/share/end-of-world-bot/0.1.0-alpha.3"
-cd "$HOME/.local/share/end-of-world-bot/0.1.0-alpha.3"
+sh install.sh --dest "$HOME/.local/share/end-of-world-bot/0.1.0-beta.1"
+cd "$HOME/.local/share/end-of-world-bot/0.1.0-beta.1"
 ```
 
 The installer refuses to overwrite an existing destination (even an empty one), so re-running it
@@ -82,7 +82,7 @@ sh launch.sh search 'Where are the beacon batteries?'
 The result is a set of cited excerpts (source ID plus file and page location), not AI-generated
 answers. This retrieval mode works fully offline with no setup beyond what is shown here.
 
-Details: [README quickstart](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-alpha.3/README.md#quickstart-no-model-needed)
+Details: [README quickstart](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-beta.1/README.md#quickstart-no-model-needed)
 
 ## 4. Adding new files later: intake and reindex
 
@@ -91,7 +91,7 @@ you already have. The project provides a separate intake path for this. Both the
 the database-only install have a `data/intake/` directory for owner-chosen documents.
 
 Source for everything in this section:
-[docs/DOCUMENT_INTAKE.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-alpha.3/docs/DOCUMENT_INTAKE.md).
+[docs/DOCUMENT_INTAKE.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-beta.1/docs/DOCUMENT_INTAKE.md).
 
 ### 4a. Workflow
 
@@ -163,7 +163,7 @@ original library explicitly with `--library`.
 Separately from intake, the project provides `download_manuals.py`, which fetches its curated
 catalog of public-domain and otherwise eligible manuals (21 eligible PDFs, roughly 55 MB in this
 release). It is optional, and nothing is downloaded unless you run it. See
-[INSTALL_AND_DOWNLOAD.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-alpha.3/INSTALL_AND_DOWNLOAD.md)
+[INSTALL_AND_DOWNLOAD.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-beta.1/INSTALL_AND_DOWNLOAD.md)
 for the details rather than relying on this guide.
 
 ---
@@ -171,7 +171,7 @@ for the details rather than relying on this guide.
 ## 5. Optional: add a local AI model
 
 This section covers the smallest tier the project considers reasonably useful. The project's own
-[docs/HARDWARE.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-alpha.3/docs/HARDWARE.md)
+[docs/HARDWARE.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-beta.1/docs/HARDWARE.md)
 lays out planning tiers. The **0.5–1.5B tier is explicitly called out as unsuitable for real
 answers** ("optional short routing/rephrasing only; never safety-critical reasoning"). The smallest
 tier the project itself recommends for actually useful, cited assistance is:
@@ -211,7 +211,7 @@ python3 bot.py --root library ask 'Where are the beacon batteries?' --model llam
   `--profile standard` for 4,096/192 if you need longer answers and have the RAM for it.
 - All inference stays on loopback (`127.0.0.1`). No data leaves your machine.
 
-Full details: [README, Optional local AI](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-alpha.3/README.md#optional-local-ai)
+Full details: [README, Optional local AI](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-beta.1/README.md#optional-local-ai)
 
 ### 5c. Optional: chat UI via Open WebUI
 
@@ -226,7 +226,7 @@ version 0.11.3 minimum per the project's Pipe), import `openwebui_pipe.py` as a 
 admin interface, and point it at the adapter. This is genuinely optional. The CLI `ask` command
 above is fully functional on its own.
 
-Full details: [docs/CHAT.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-alpha.3/docs/CHAT.md)
+Full details: [docs/CHAT.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-beta.1/docs/CHAT.md)
 
 ---
 
@@ -240,7 +240,7 @@ These come from the project's own documentation.
 - No models, maps, or documents are bundled. Every download above is explicit and separate.
 - The original index is never silently overwritten. Back up `library/local-qa/guides.sqlite` before
   reindexing changed documents in the main library (see
-  [docs/RECOVERY.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-alpha.3/docs/RECOVERY.md)).
+  [docs/RECOVERY.md](https://github.com/smilidon/end-of-the-world-bot/blob/v0.1.0-beta.1/docs/RECOVERY.md)).
   The intake path in section 4 writes to new generations instead and leaves the main library alone.
 - License: GPL-3.0-only for the Bot itself. Ollama, models, and Open WebUI each carry their own
   separate licenses. Check them before use.

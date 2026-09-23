@@ -16,7 +16,8 @@ from portable import package_files
 def build(root, output):
     bodies = package_files(root)
     version = bodies['VERSION'].decode().strip()
-    if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+-alpha\.[0-9]+', version):
+    # Pre-release channels only; a bare X.Y.Z is still refused as a stable claim.
+    if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+-(?:alpha|beta|rc)\.[0-9]+', version):
         raise ValueError('Invalid release version')
     output = output.resolve()
     if output == root.resolve() or root.resolve() in output.parents:

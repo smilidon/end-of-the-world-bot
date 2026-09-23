@@ -142,7 +142,8 @@ def main(root, arguments):
         drive = validate_drive(drive, bool(a.simulate_drive))
     identity = (drive.stat().st_dev, drive.stat().st_ino) if drive else None
     version = (root / 'VERSION').read_text().strip()
-    if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+-alpha\.[0-9]+', version):
+    # Pre-release channels only; a bare X.Y.Z is still refused as a stable claim.
+    if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+-(?:alpha|beta|rc)\.[0-9]+', version):
         raise ValueError('Invalid release version')
     destination = a.dest or (drive / 'EndOfWorldBot' if drive else Path.home() / '.local/share/end-of-world-bot' / version)
     target = validate_target(destination, root, drive)
