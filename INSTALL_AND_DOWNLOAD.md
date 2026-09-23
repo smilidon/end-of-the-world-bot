@@ -11,6 +11,11 @@ manual-content choices, confined documents/printing, USB model limits and clean-
 verification. Existing files/services are preserved. No models or manuals are bundled.
 The release commands below still target alpha.3, not this new flow.
 
+For a non-bootable USB **data-folder copy from Windows**, use the current-source
+[PowerShell helper](docs/WINDOWS_USB.md). It does not run Bot natively on Windows
+or generate references; Windows reading is limited to an explicitly supplied,
+Linux-prepared `reference.html`. The historical alpha.2 download lacks this helper.
+
 **Linux, Python 3.11+, SQLite FTS5, POSIX sh and curl required.** Poppler `pdftotext` is needed to index PDFs. Windows users: run these commands inside a prepared WSL Linux terminal. Native Windows/macOS and each branded agent application have not been qualified. No sudo, runtime downloads, drive formatting or running-service changes.
 
 ## Copy and paste: verified install + catalog preview

@@ -201,3 +201,9 @@ windows/setup-windows.ps1
 windows/setup-wsl.sh
 update_checker.py
 VERSION
+.gitattributes
+create-usb.ps1
+docs/PROJECT_STATUS.md
+docs/WINDOWS_USB.md
+tests/test_ci_workspace.py
+tests/test_windows_usb.py

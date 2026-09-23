@@ -18,6 +18,12 @@ manual-content choices, confined documents/printing, USB model limits and clean-
 verification. Existing files/services are preserved. No models or manuals are bundled.
 The release commands below still target alpha.3, not this new flow.
 
+**Windows USB preparation (current source):** use [create-usb.ps1](docs/WINDOWS_USB.md)
+to copy verified files into a **new drive folder**. This is not bootable; no Rufus
+or native Windows Bot runtime. Windows can only read a Linux-prepared static
+`reference.html` when explicitly included. Bot execution/indexing requires Linux.
+See [project status](docs/PROJECT_STATUS.md) for the current boundary and next work.
+
 A Linux-first, local reference assistant for an offline document library, with
 source citations and optional OsmAnd routing and printable directions.
 

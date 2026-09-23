@@ -18,6 +18,11 @@ manual-content choices, confined documents/printing, USB model limits and clean-
 verification. Existing files/services are preserved. No models or manuals are bundled.
 The release commands below still target alpha.3, not this new flow.
 
+**Preparing a USB from Windows?** Follow the [PowerShell copy guide](docs/WINDOWS_USB.md).
+It creates a new non-bootable data folder, not a Windows Bot installation. Only
+a separately prepared `reference.html` can be read/searched/printed on Windows;
+Bot runtime and content indexing remain Linux-only.
+
 Version **0.1.0-alpha.3**. A local document search tool with source excerpts and
 file/page citations. This download includes a working installer, portable launcher,
 and complete GPL-3.0-only application source. It is **not a bootable operating
