@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
+import hashlib
 import importlib.util
 from pathlib import Path
 import subprocess
@@ -53,6 +54,17 @@ class Privacy(unittest.TestCase):
             output.assert_any_call('unexpected.txt: not in source allowlist')
             output.assert_any_call('installer.deb: not in source allowlist')
             output.assert_any_call('installer.deb: binary')
+
+    def test_pinned_binary_accepted_only_at_its_exact_digest(self):
+        name, digest = next(iter(scan.BINARIES.items()))
+        body = (Path(__file__).resolve().parents[1] / name).read_bytes()
+        self.assertEqual(hashlib.sha256(body).hexdigest(), digest, 'Pinned digest is stale')
+        # The real bytes pass; tampered bytes and an unpinned name do not.
+        self.assertFalse(scan.inspect(name, body, {name}))
+        self.assertIn((name, 'binary'), scan.inspect(name, body + b'\x00', {name}))
+        self.assertIn(('other.ico', 'binary'), scan.inspect('other.ico', body, {'other.ico'}))
+        # Pinning does not exempt a file from the release allowlist.
+        self.assertIn((name, 'not in source allowlist'), scan.inspect(name, body, set()))
 
     def test_unlisted_staged_and_deleted_history_remain_rejected(self):
         with tempfile.TemporaryDirectory() as td:

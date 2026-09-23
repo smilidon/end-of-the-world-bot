@@ -207,3 +207,6 @@ docs/PROJECT_STATUS.md
 docs/WINDOWS_USB.md
 tests/test_ci_workspace.py
 tests/test_windows_usb.py
+eotwb-icon.ico
+eotwb-icon.png
+eotwb-icon.svg
