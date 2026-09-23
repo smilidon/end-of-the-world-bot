@@ -201,3 +201,6 @@ windows/setup-windows.ps1
 windows/setup-wsl.sh
 update_checker.py
 VERSION
+eotwb-icon.ico
+eotwb-icon.png
+eotwb-icon.svg
