@@ -3,6 +3,14 @@
 This summary covers work actually merged into `main` through
 `f0d6908310632e909bf141a96c1743e5f4dc6267`. Dates below are UTC.
 
+- **2026-09-22 — v0.1.0-beta.1 ([#13](https://github.com/smilidon/end-of-the-world-bot/pull/13),
+  [#20](https://github.com/smilidon/end-of-the-world-bot/pull/20)):**
+  Added the native PowerShell `create-usb.ps1` copier and its Windows static-reader
+  workflow, which prepares a non-bootable data folder on an already mounted drive.
+  Bot runtime and content indexing remain Linux-only; only a separately prepared
+  `reference.html` is readable on Windows. Added the application icon, and pinned
+  shipped binaries by SHA-256 in the privacy scanner. Supersedes PR #9, whose
+  copier was byte-identical and whose tests were a subset.
 - **2026-09-13 — v0.1.0-alpha.3 ([#3](https://github.com/smilidon/end-of-the-world-bot/pull/3)):**
   Added the publisher-referenced manual catalog and terminal-agent setup
   documentation. The source package contains no manuals or model weights.

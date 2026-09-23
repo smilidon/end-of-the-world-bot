@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1f4a34"/>
+      <stop offset="100%" stop-color="#123324"/>
+    </linearGradient>
+    <clipPath id="frameClip">
+      <rect width="512" height="512" rx="88"/>
+    </clipPath>
+  </defs>
+
+  <!-- background: near-black, Pip-Boy/terminal-bunker aesthetic -->
+  <rect width="512" height="512" rx="88" fill="#0d0f10"/>
+
+  <!-- mushroom cloud: classic iconic silhouette — bulging cap with undercut lobes, pinched neck, flared stem base -->
+  <g clip-path="url(#frameClip)" fill="#ff5a36" opacity="0.85" transform="translate(0,20) scale(1.08)">
+    <path d="M 256 58
+      C 216 58 171 80 146 118
+      C 111 170 61 175 61 215
+      C 61 245 91 262 131 266
+      C 96 272 71 290 71 312
+      C 71 336 106 352 156 352
+      C 186 352 210 346 224 336
+      C 216 320 210 300 210 282
+      C 210 270 218 260 230 254
+      L 230 420
+      C 230 440 204 452 186 470
+      L 326 470
+      C 308 452 282 440 282 420
+      L 282 254
+      C 294 260 302 270 302 282
+      C 302 300 296 320 288 336
+      C 302 346 326 352 356 352
+      C 406 352 441 336 441 312
+      C 441 290 416 272 381 266
+      C 421 262 451 245 451 215
+      C 451 175 401 170 366 118
+      C 341 80 296 58 256 58
+      Z"/>
+  </g>
+
+  <!-- frame border: subtle lighter edge so the icon doesn't read as "dead" against light OS chrome -->
+  <rect width="512" height="512" rx="88" fill="none" stroke="#3a4a42" stroke-width="4"/>
+
+  <!-- terminal / robot head body: bright green bezel, the natural high-contrast pairing on a dark background -->
+  <rect x="156" y="180" width="200" height="184" rx="22" fill="url(#screenGrad)" stroke="#39ff8f" stroke-width="10"/>
+
+  <!-- antenna -->
+  <line x1="256" y1="180" x2="256" y2="148" stroke="#39ff8f" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="256" cy="138" r="13" fill="#39ff8f"/>
+
+  <!-- eyes: bold solid bright shapes for maximum contrast against the head fill, large enough to survive downscaling -->
+  <g fill="#39ff8f">
+    <rect x="188" y="222" width="42" height="42" rx="8"/>
+    <rect x="282" y="222" width="42" height="42" rx="8"/>
+  </g>
+
+  <!-- mouth: command line prompt, bright and bold -->
+  <text x="182" y="332" font-family="monospace" font-weight="bold" font-size="38" fill="#39ff8f">&gt;_</text>
+
+  <!-- base / stand -->
+  <rect x="216" y="364" width="80" height="16" rx="6" fill="#39ff8f"/>
+  <rect x="230" y="380" width="52" height="12" rx="5" fill="#0d0f10"/>
+</svg>

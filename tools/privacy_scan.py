@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 """Source-package allowlist and heuristic worktree/index/history privacy guard."""
 from pathlib import Path
+import hashlib
 import re
 import subprocess
 import sys
@@ -14,6 +15,13 @@ RULES = {
     'url_credentials': r'https?://[^\s/]+:[^\s/]+@',
 }
 IGNORED = {'.git', '.venv', '__pycache__', '.pytest_cache', 'graft'}
+# Binaries cannot be pattern-scanned, so each shipped one is pinned by exact
+# SHA-256. Editing or swapping a file changes its digest and restores the
+# 'binary' finding; unpinned binaries are still rejected.
+BINARIES = {
+    'eotwb-icon.ico': 'a0935c109ab33a1fa12bf7134bbf944c969333c97a8471534edadb5f9023b7a9',
+    'eotwb-icon.png': 'f2289c37e27fdbdef2dd7d763643d06983705af7f67ab87c2e254cdb19d67485',
+}
 
 
 def inspect(name, body, allowed, check_allowlist=True):
@@ -23,6 +31,8 @@ def inspect(name, body, allowed, check_allowlist=True):
     try:
         text = body.decode('utf-8')
     except UnicodeError:
+        if BINARIES.get(name) == hashlib.sha256(body).hexdigest():
+            return findings
         return findings + [(name, 'binary')]
     for label, pattern in RULES.items():
         if re.search(pattern, text, re.I):

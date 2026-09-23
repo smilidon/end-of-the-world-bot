@@ -18,7 +18,12 @@ manual-content choices, confined documents/printing, USB model limits and clean-
 verification. Existing files/services are preserved. No models or manuals are bundled.
 The release commands below still target alpha.3, not this new flow.
 
-Version **0.1.0-alpha.3**. A local document search tool with source excerpts and
+**Preparing a USB from Windows?** Follow the [PowerShell copy guide](docs/WINDOWS_USB.md).
+It creates a new non-bootable data folder, not a Windows Bot installation. Only
+a separately prepared `reference.html` can be read/searched/printed on Windows;
+Bot runtime and content indexing remain Linux-only.
+
+Version **0.1.0-beta.1**. A local document search tool with source excerpts and
 file/page citations. This download includes a working installer, portable launcher,
 and complete GPL-3.0-only application source. It is **not a bootable operating
 system, bundled AI appliance, or universal installer**. No Python runtime, pip
@@ -45,7 +50,7 @@ use `PYTHON=/path/to/python3 sh launch.sh doctor` (quote a path containing space
 ## Open the download
 
 Download the versioned `linux-python.zip` and `SHA256SUMS` from the
-[GitHub release](https://github.com/smilidon/end-of-the-world-bot/releases/tag/v0.1.0-alpha.3).
+[GitHub release](https://github.com/smilidon/end-of-the-world-bot/releases/tag/v0.1.0-beta.1).
 Verify the ZIP before extraction from the folder containing both files:
 
 ```sh
@@ -53,7 +58,7 @@ sha256sum --ignore-missing -c SHA256SUMS
 ```
 
 Ensure the ZIP itself reports `OK`. Extract with your file manager or
-`python3 -m zipfile -e end-of-the-world-bot-0.1.0-alpha.3-linux-python.zip .`.
+`python3 -m zipfile -e end-of-the-world-bot-0.1.0-beta.1-linux-python.zip .`.
 Open a terminal inside the extracted folder. These instructions always use `sh`
 so executable permission bits are unnecessary on FAT or a `noexec` flash drive:
 
@@ -75,11 +80,11 @@ Do not make symlinks for application or library directories.
 ## Option B: install a local copy without the flash wizard
 
 ```sh
-sh install.sh --dest "$HOME/.local/share/end-of-world-bot/0.1.0-alpha.3"
+sh install.sh --dest "$HOME/.local/share/end-of-world-bot/0.1.0-beta.1"
 ```
 
 This copies the verified application into
-`~/.local/share/end-of-world-bot/0.1.0-alpha.3` and creates an empty `library/guides/`.
+`~/.local/share/end-of-world-bot/0.1.0-beta.1` and creates an empty `library/guides/`.
 Open a terminal in that folder and use `sh launch.sh ...` there. For a different
 **new** folder (including a flash-drive folder), use:
 
